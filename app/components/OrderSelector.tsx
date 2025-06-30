@@ -10,7 +10,7 @@ export default function OrderSelector() {
 		<Dropdown>
 			<MenuButton
 				variant="plain"
-				color="primary"
+				color="success"
 				endDecorator={<ArrowDropDown />}
 				sx={{ whiteSpace: "nowrap" }}
 			>

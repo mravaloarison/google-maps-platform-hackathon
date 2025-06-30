@@ -18,7 +18,7 @@ export default function Search() {
 						aria-label="Search"
 					/>
 				</FormControl>
-				<Button variant="solid" color="primary">
+				<Button variant="solid" color="success">
 					Search
 				</Button>
 			</Stack>

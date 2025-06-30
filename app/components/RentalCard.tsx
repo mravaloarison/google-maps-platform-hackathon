@@ -13,10 +13,7 @@ import Typography from "@mui/joy/Typography";
 import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import FmdGoodRoundedIcon from "@mui/icons-material/FmdGoodRounded";
-import KingBedRoundedIcon from "@mui/icons-material/KingBedRounded";
-import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
-import Star from "@mui/icons-material/Star";
-import { EmojiNature, PanoramaFishEye, Visibility } from "@mui/icons-material";
+import { Pets, Visibility } from "@mui/icons-material";
 import { Button } from "@mui/joy";
 
 type RentalCardProps = {
@@ -80,11 +77,11 @@ export default function RentalCard(props: RentalCardProps) {
 						{rareFind && (
 							<Chip
 								variant="soft"
-								color="success"
+								color="warning"
 								startDecorator={<WorkspacePremiumRoundedIcon />}
 								size="md"
 							>
-								Rare find
+								Vulnerable
 							</Chip>
 						)}
 						<IconButton
@@ -157,19 +154,21 @@ export default function RentalCard(props: RentalCardProps) {
 					justifyContent="space-between"
 					sx={{ mt: "auto" }}
 				>
-					<Typography
-						level="title-sm"
+					<Link
+						level="body-sm"
+						color="success"
+						variant="plain"
 						startDecorator={<Visibility />}
 					>
 						by 356
-					</Typography>
+					</Link>
 					<Button
-						color="success"
+						color="neutral"
 						onClick={function () {}}
-						variant="soft"
-						startDecorator={<EmojiNature />}
+						variant="outlined"
+						startDecorator={<Pets />}
 					>
-						Report Sighting
+						Add Sighting
 					</Button>
 				</Stack>
 			</CardContent>
