@@ -9,10 +9,10 @@ export default function HeaderSection() {
 				direction="row"
 				sx={{ justifyContent: "space-between", width: "100%" }}
 			>
-				<Typography level="h2">Rental properties</Typography>
+				<Typography level="h2">Explore Wildlife Near You</Typography>
 			</Stack>
 			<Typography level="body-md" color="neutral">
-				Book your next stay at one of our properties.
+				Discover Species Around the World
 			</Typography>
 		</Stack>
 	);

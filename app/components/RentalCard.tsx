@@ -16,6 +16,8 @@ import FmdGoodRoundedIcon from "@mui/icons-material/FmdGoodRounded";
 import KingBedRoundedIcon from "@mui/icons-material/KingBedRounded";
 import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
 import Star from "@mui/icons-material/Star";
+import { EmojiNature, PanoramaFishEye, Visibility } from "@mui/icons-material";
+import { Button } from "@mui/joy";
 
 type RentalCardProps = {
 	category: React.ReactNode;
@@ -147,44 +149,28 @@ export default function RentalCard(props: RentalCardProps) {
 						level="body-xs"
 						startDecorator={<FmdGoodRoundedIcon />}
 					>
-						Collingwood VIC
-					</Typography>
-					<Typography
-						level="body-xs"
-						startDecorator={<KingBedRoundedIcon />}
-					>
-						1 bed
-					</Typography>
-					<Typography
-						level="body-xs"
-						startDecorator={<WifiRoundedIcon />}
-					>
-						Wi-Fi
+						Madagascar, Bronx Zoo, Central Park +5
 					</Typography>
 				</Stack>
-				<Stack direction="row" sx={{ mt: "auto" }}>
+				<Stack
+					direction="row"
+					justifyContent="space-between"
+					sx={{ mt: "auto" }}
+				>
 					<Typography
 						level="title-sm"
-						startDecorator={
-							<React.Fragment>
-								<Star sx={{ color: "warning.400" }} />
-								<Star sx={{ color: "warning.400" }} />
-								<Star sx={{ color: "warning.400" }} />
-								<Star sx={{ color: "warning.400" }} />
-								<Star sx={{ color: "warning.200" }} />
-							</React.Fragment>
-						}
-						sx={{ display: "flex", gap: 1 }}
+						startDecorator={<Visibility />}
 					>
-						4.0
+						by 356
 					</Typography>
-					<Typography
-						level="title-lg"
-						sx={{ flexGrow: 1, textAlign: "right" }}
+					<Button
+						color="success"
+						onClick={function () {}}
+						variant="soft"
+						startDecorator={<EmojiNature />}
 					>
-						<strong>$540</strong>{" "}
-						<Typography level="body-md">total</Typography>
-					</Typography>
+						Report Sighting
+					</Button>
 				</Stack>
 			</CardContent>
 		</Card>

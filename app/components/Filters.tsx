@@ -38,7 +38,7 @@ export default function Filters() {
 				startDecorator={<FilterAltOutlined />}
 				onClick={() => setOpen(true)}
 			>
-				Filters
+				Filter Species
 			</Button>
 			<OrderSelector />
 			<Drawer open={open} onClose={() => setOpen(false)}>
