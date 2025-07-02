@@ -15,10 +15,16 @@ import Search from "../components/Search";
 import Filters from "../components/Filters";
 import Pagination from "../components/Pagination";
 
+import { getSpeciesImage } from "../lib/getSpeciesImage";
+
 interface Species {
 	title: string;
 	category: string;
 	image: string;
+	redListCategory: string;
+	redListCategoryCode: string;
+	habitats: string;
+	threats: string;
 	liked: boolean;
 }
 
@@ -26,23 +32,74 @@ export default function RentalDashboard() {
 	const [speciesCards, setSpeciesCards] = useState<Species[]>([]);
 	const [countryName, setCountryName] = useState<string | null>(null);
 	const [showResult, setShowResult] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+
+	React.useEffect(() => {
+		setSpeciesCards([]);
+	}, [countryName]);
 
 	const fetchSpeciesByCountry = async (code: string, name: string) => {
 		setShowResult(false);
+		setIsLoading(true);
 		setCountryName(name);
 
 		const res = await fetch(`/api/countries/${code}`);
 		const data = await res.json();
 
-		const newCards = data.assessments?.map((item: any) => ({
-			title: item.taxon_scientific_name,
-			category: item.red_list_category_code,
-			image: `https://source.unsplash.com/featured/?animal,${item.taxon_scientific_name}`,
-			liked: false,
-		}));
+		const assessments = data.assessments || [];
 
-		setSpeciesCards(newCards || []);
+		for (const assessment of assessments) {
+			const assessmentId = assessment.assessment_id;
+
+			try {
+				const full = await fetch(
+					`/api/iucn_assessment/${assessmentId}`
+				);
+				const fullData = await full.json();
+
+				const taxon = fullData?.taxon || {};
+				const red_list_category = fullData?.red_list_category || {};
+				const documentation = fullData?.documentation || {};
+
+				const commonName = taxon.common_names?.find(
+					(n: any) => n.language === "eng"
+				)?.name;
+
+				const title =
+					commonName ||
+					taxon.scientific_name ||
+					assessment.taxon_scientific_name;
+				const category =
+					taxon.class_name || assessment.red_list_category_code;
+
+				const image = await getSpeciesImage(title);
+
+				const habitats = documentation.habitats || "";
+				const threats = documentation.threats || "";
+
+				const redListCategory = red_list_category.description?.en || "";
+				const redListCategoryCode = red_list_category.code || "";
+
+				setSpeciesCards((prev) => [
+					...prev,
+					{
+						title,
+						category,
+						image,
+						redListCategory,
+						redListCategoryCode,
+						habitats,
+						threats,
+						liked: false,
+					},
+				]);
+			} catch (err) {
+				console.error(`Failed for Assessment ID ${assessmentId}:`, err);
+			}
+		}
+
 		setShowResult(true);
+		setIsLoading(false);
 	};
 
 	return (
@@ -73,10 +130,20 @@ export default function RentalDashboard() {
 							fetchSpeciesByCountry(code, name)
 						}
 						onTyping={() => setShowResult(false)}
+						isLoading={isLoading}
 					/>
+
 					{showResult && countryName && (
 						<Typography level="body-sm" sx={{ mt: 1 }}>
-							{speciesCards.length} species found in {countryName}
+							{speciesCards.length >= 100
+								? `100+ species found in ${countryName}`
+								: `${speciesCards.length} species found in ${countryName}`}
+						</Typography>
+					)}
+
+					{isLoading && (
+						<Typography level="body-sm" sx={{ mt: 1 }}>
+							Loading species data... Please wait.
 						</Typography>
 					)}
 				</Stack>
@@ -98,15 +165,32 @@ export default function RentalDashboard() {
 				>
 					<Filters />
 					<Stack spacing={2} sx={{ overflow: "auto" }}>
-						{speciesCards.map((species, index) => (
-							<RentalCard
-								key={index}
-								title={species.title}
-								category={species.category}
-								image={species.image}
-								liked={species.liked}
+						{speciesCards.length === 1 ? (
+							<Typography>
+								Loading species data... Please wait.
+							</Typography>
+						) : (
+							speciesCards.map((species, index) => (
+								<RentalCard
+									key={index}
+									title={species.title}
+									category={species.category}
+									image={species.image}
+									liked={species.liked}
+								/>
+							))
+						)}
+						{isLoading ?? (
+							<Box
+								sx={{
+									height: 160,
+									borderRadius: "md",
+									backgroundColor: "neutral.softBg",
+									animation:
+										"pulse 1.5s infinite ease-in-out",
+								}}
 							/>
-						))}
+						)}
 					</Stack>
 				</Stack>
 				<Pagination />

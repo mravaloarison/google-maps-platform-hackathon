@@ -22,9 +22,14 @@ interface Country {
 interface Props {
 	onSelectCountry: (countryCode: string, countryName: string) => void;
 	onTyping?: () => void;
+	isLoading?: boolean;
 }
 
-export default function Search({ onSelectCountry, onTyping }: Props) {
+export default function Search({
+	onSelectCountry,
+	onTyping,
+	isLoading,
+}: Props) {
 	const [query, setQuery] = useState("");
 	const [allCountries, setAllCountries] = useState<Country[]>([]);
 	const [filtered, setFiltered] = useState<Country[]>([]);
@@ -96,6 +101,7 @@ export default function Search({ onSelectCountry, onTyping }: Props) {
 						}}
 						startDecorator={<SearchRoundedIcon />}
 						aria-label="Search"
+						autoComplete="off"
 					/>
 					{filtered.length > 0 && (
 						<List
@@ -130,7 +136,12 @@ export default function Search({ onSelectCountry, onTyping }: Props) {
 						</List>
 					)}
 				</FormControl>
-				<Button variant="solid" color="success" onClick={handleSearch}>
+				<Button
+					variant="solid"
+					color="success"
+					onClick={handleSearch}
+					loading={isLoading}
+				>
 					Search
 				</Button>
 			</Stack>
