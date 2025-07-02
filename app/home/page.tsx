@@ -134,7 +134,7 @@ export default function RentalDashboard() {
 					/>
 
 					{showResult && countryName && (
-						<Typography level="body-sm" sx={{ mt: 1 }}>
+						<Typography level="body-sm">
 							{speciesCards.length >= 100
 								? `100+ species found in ${countryName}`
 								: `${speciesCards.length} species found in ${countryName}`}
@@ -142,7 +142,7 @@ export default function RentalDashboard() {
 					)}
 
 					{isLoading && (
-						<Typography level="body-sm" sx={{ mt: 1 }}>
+						<Typography level="body-sm">
 							Loading species data... Please wait.
 						</Typography>
 					)}

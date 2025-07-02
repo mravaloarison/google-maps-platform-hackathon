@@ -157,6 +157,12 @@ export default function Search({
 					Showing results for "{selectedCountry.description.en}"
 				</Typography>
 			)}
+
+			{!showSuggestionBanner && !selectedCountry && (
+				<Typography level="body-sm" sx={{ mt: 1 }}>
+					Search for a country or location to find species.
+				</Typography>
+			)}
 		</div>
 	);
 }
