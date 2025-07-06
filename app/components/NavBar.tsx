@@ -2,7 +2,7 @@ import * as React from "react";
 import { Box, IconButton } from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import Avatar from "@mui/joy/Avatar";
-import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
+import PetsIcon from "@mui/icons-material/Pets";
 
 export default function HeaderSection() {
 	return (
@@ -32,10 +32,10 @@ export default function HeaderSection() {
 				}}
 			>
 				<IconButton size="sm" variant="soft">
-					<MapsHomeWorkIcon />
+					<PetsIcon />
 				</IconButton>
 				<Typography component="h1" sx={{ fontWeight: "xl" }}>
-					Acme Rental
+					Explore Nature
 				</Typography>
 			</Box>
 			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
@@ -46,15 +46,11 @@ export default function HeaderSection() {
 						display: { xs: "none", sm: "flex" },
 					}}
 				>
-					<Avatar
-						variant="outlined"
-						size="sm"
-						src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
-					/>
+					<Avatar variant="outlined" size="sm" src="" />
 					<Box sx={{ minWidth: 0, flex: 1 }}>
-						<Typography level="title-sm">Siriwat K.</Typography>
+						<Typography level="title-sm">Mami R.</Typography>
 						<Typography level="body-xs">
-							siriwatk@test.com
+							mravaloarison@test.com
 						</Typography>
 					</Box>
 				</Box>

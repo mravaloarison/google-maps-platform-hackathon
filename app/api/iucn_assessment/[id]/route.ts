@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-	const { id } = params;
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
+	const { id } = context.params;
 
 	const res = await fetch(`https://api.iucnredlist.org/api/v4/assessment/${id}`, {
 		headers: {

@@ -11,7 +11,12 @@ export default function HeaderSection() {
 			>
 				<Typography level="h2">Explore Wildlife Near You</Typography>
 			</Stack>
-			<Typography level="body-md" color="neutral">
+			<Typography
+				level="body-md"
+				sx={{
+					color: "darkgrey",
+				}}
+			>
 				Discover Species Around the World
 			</Typography>
 		</Stack>

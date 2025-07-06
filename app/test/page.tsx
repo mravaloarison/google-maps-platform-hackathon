@@ -39,69 +39,66 @@ export default function RentalDashboard() {
 		setSpeciesCards([]);
 	}, [countryName]);
 
-	const fetchSpeciesByCountry = async (code: string, name: string) => {
+	async function fetchSpeciesByCountry(code: string, name: string) {
 		setShowResult(false);
 		setIsLoading(true);
 		setCountryName(name);
 
-		const res = await fetch(`/api/countries/${code}`);
-		const data = await res.json();
+		// 1. Fetch occurrences by country
+		const occRes = await fetch(
+			`https://api.gbif.org/v1/occurrence/search?country=${code}&limit=100`
+		);
+		const occJson = await occRes.json();
 
-		const assessments = data.assessments || [];
+		// 2. Extract top species keys from the facets
+		const facet = occJson.facets?.find(
+			(f: any) => f.field === "speciesKey"
+		);
+		const speciesKeys: number[] =
+			facet?.counts.map((c: any) => c.name) || [];
 
-		for (const assessment of assessments) {
-			const assessmentId = assessment.assessment_id;
-
-			try {
-				const full = await fetch(
-					`/api/iucn_assessment/${assessmentId}`
-				);
-				const fullData = await full.json();
-
-				const taxon = fullData?.taxon || {};
-				const red_list_category = fullData?.red_list_category || {};
-				const documentation = fullData?.documentation || {};
-
-				const commonName = taxon.common_names?.find(
-					(n: any) => n.language === "eng"
-				)?.name;
-
-				const title =
-					commonName ||
-					taxon.scientific_name ||
-					assessment.taxon_scientific_name;
-				const category =
-					taxon.class_name || assessment.red_list_category_code;
-
-				const image = await getSpeciesImage(title);
-
-				const habitats = documentation.habitats || "";
-				const threats = documentation.threats || "";
-
-				const redListCategory = red_list_category.description?.en || "";
-				const redListCategoryCode = red_list_category.code || "";
-
-				setSpeciesCards((prev) => [
-					...prev,
-					{
-						title,
-						category,
-						image,
-						redListCategory,
-						redListCategoryCode,
-						habitats,
-						threats,
-						liked: false,
-					},
+		// 3. Fetch details and media for each species (just first 10 for demo)
+		const detailed = await Promise.all(
+			speciesKeys.slice(0, 10).map(async (key: number) => {
+				const [spRes, mediaRes] = await Promise.all([
+					fetch(`https://api.gbif.org/v1/species/${key}`),
+					fetch(`https://api.gbif.org/v1/species/${key}/media`),
 				]);
-			} catch (err) {
-				console.error(`Failed for Assessment ID ${assessmentId}:`, err);
-			}
-		}
+				const spJson = await spRes.json();
+				const mediaJson = await mediaRes.json();
+
+				const imageUrl =
+					mediaJson.results?.find((m: any) => m.type === "StillImage")
+						?.identifier || null;
+
+				return {
+					speciesKey: key,
+					scientificName: spJson.scientificName,
+					vernacularName: spJson.vernacularName || null,
+					image: imageUrl,
+				};
+			})
+		);
+
+		console.log(detailed);
+
+		// update UI state as needed
+		setSpeciesCards(
+			detailed.map((item) => ({
+				title: item.vernacularName || item.scientificName,
+				category: item.scientificName,
+				image: item.image || "",
+				redListCategory: "", // you'd add this if fetched
+				redListCategoryCode: "",
+				habitats: "",
+				threats: "",
+				liked: false,
+			}))
+		);
 
 		setShowResult(true);
 		setIsLoading(false);
-	};
+	}
 
 	return (
 		<CssVarsProvider disableTransitionOnChange>
