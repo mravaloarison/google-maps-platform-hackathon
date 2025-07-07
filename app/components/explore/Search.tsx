@@ -6,8 +6,7 @@ import FormControl from "@mui/joy/FormControl";
 import Input from "@mui/joy/Input";
 import Stack from "@mui/joy/Stack";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { Link } from "@mui/joy";
-import { Close, Shuffle } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import LocationAutocompleteList from "./LocationAutocompleteList";
 import SpeciesAutocompleteList from "./SpeciesAutocompleteList";
 
@@ -109,54 +108,44 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	};
 
 	return (
-		<div>
-			<Stack spacing={1} direction="row" sx={{ mb: 1.5 }}>
-				<FormControl sx={{ flex: 1 }}>
-					<Input
-						autoComplete="off"
-						placeholder={
-							tabIndex === 0
-								? "Enter species name"
-								: "Enter a location"
-						}
-						value={searchValue}
-						onChange={(e) => setSearchValue(e.target.value)}
-						startDecorator={<SearchRoundedIcon />}
-						endDecorator={
-							searchValue && (
-								<Close onClick={() => setSearchValue("")} />
-							)
-						}
-						aria-label="Search"
-						size="lg"
-						sx={{
+		<Stack spacing={1} direction="row" sx={{ mb: 1.5 }}>
+			<FormControl sx={{ flex: 1 }}>
+				<Input
+					autoComplete="off"
+					placeholder={
+						tabIndex === 0
+							? "Enter species name"
+							: "Enter a location"
+					}
+					value={searchValue}
+					onChange={(e) => setSearchValue(e.target.value)}
+					startDecorator={<SearchRoundedIcon />}
+					endDecorator={
+						searchValue && (
+							<Close onClick={() => setSearchValue("")} />
+						)
+					}
+					aria-label="Search"
+					size="lg"
+					sx={{
+						"--Input-focusedHighlight": "#357a38",
+						"--Input-focusedBorderColor": "#357a38",
+						"&:focus-within": {
 							"--Input-focusedHighlight": "#357a38",
 							"--Input-focusedBorderColor": "#357a38",
-							"&:focus-within": {
-								"--Input-focusedHighlight": "#357a38",
-								"--Input-focusedBorderColor": "#357a38",
-							},
-						}}
-					/>
-					<LocationAutocompleteList
-						locations={filteredLocationResults}
-						onSelect={handleLocationAutocompleteSelect}
-					/>
+						},
+					}}
+				/>
+				<LocationAutocompleteList
+					locations={filteredLocationResults}
+					onSelect={handleLocationAutocompleteSelect}
+				/>
 
-					<SpeciesAutocompleteList
-						speciesList={filteredSpeciesResults}
-						onSelect={handleSpeciesAutocompleteSelect}
-					/>
-				</FormControl>
-			</Stack>
-			<Link
-				href="/explore"
-				startDecorator={<Shuffle />}
-				color="success"
-				fontSize="sm"
-			>
-				Surprise me!
-			</Link>
-		</div>
+				<SpeciesAutocompleteList
+					speciesList={filteredSpeciesResults}
+					onSelect={handleSpeciesAutocompleteSelect}
+				/>
+			</FormControl>
+		</Stack>
 	);
 }

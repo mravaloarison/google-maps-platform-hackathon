@@ -8,6 +8,8 @@ import { TabPanel } from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import Search from "./Search";
 import { useState } from "react";
+import Link from "@mui/joy/Link";
+import { Shuffle } from "@mui/icons-material";
 
 export default function HomeBody() {
 	const [index, setIndex] = useState(0);
@@ -66,6 +68,14 @@ export default function HomeBody() {
 					</Typography>
 				)}
 				<Search tabIndex={index} />
+				<Link
+					href={index === 0 ? "/explore" : "/explore/location"}
+					startDecorator={<Shuffle />}
+					color="success"
+					fontSize="sm"
+				>
+					Surprise me!
+				</Link>
 			</TabPanel>
 		</Tabs>
 	);

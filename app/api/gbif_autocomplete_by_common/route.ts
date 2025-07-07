@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
 	try {
 		const gbifRes = await fetch(
-			`https://api.gbif.org/v1/species/search?q=${encodeURIComponent(q)}&qField=VERNACULAR`
+			`https://api.gbif.org/v1/species/search?status=ACCEPTED&q=${encodeURIComponent(q)}&qField=VERNACULAR`
 		);
 
 		if (!gbifRes.ok) {
@@ -28,7 +28,12 @@ export async function GET(request: NextRequest) {
 		for (const item of data.results) {
 			if (!item.vernacularNames?.length || !item.canonicalName) continue;
 
-			const vernacular = item.vernacularNames[0]?.vernacularName ?? "Unknown";
+			const englishVernacular = item.vernacularNames.find(
+				(v: any) => v.language === "eng"
+			);
+
+			const vernacular = englishVernacular?.vernacularName ?? item.vernacularNames[0].vernacularName;
+
 			const uniqueKey = `${item.canonicalName.toLowerCase()}|${vernacular.toLowerCase()}`;
 
 			if (!seen.has(uniqueKey)) {
@@ -36,7 +41,7 @@ export async function GET(request: NextRequest) {
 				simplified.push({
 					key: item.key,
 					canonicalName: item.canonicalName,
-					vernacularName: vernacular
+					vernacularName: vernacular,
 				});
 			}
 		}
