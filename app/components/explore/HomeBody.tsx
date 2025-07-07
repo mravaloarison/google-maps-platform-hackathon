@@ -57,16 +57,11 @@ export default function HomeBody() {
 				</Tab>
 			</TabList>
 			<TabPanel value={index}>
-				{index === 0 ? (
-					<Typography level="body-lg" sx={{ mb: 2 }}>
-						Search for a specific animal or plant by name and learn
-						where it lives in the wild.
-					</Typography>
-				) : (
-					<Typography level="body-lg" sx={{ mb: 2 }}>
-						Pick a country to see the creatures that call it home.
-					</Typography>
-				)}
+				<Typography level="body-lg" sx={{ mb: 2 }}>
+					{index === 0
+						? "Search for a specific animal or plant by name and learn where it lives in the wild."
+						: "Pick a country to see the creatures that call it home."}
+				</Typography>
 				<Search tabIndex={index} />
 				<Link
 					href={index === 0 ? "/explore" : "/explore/location"}
