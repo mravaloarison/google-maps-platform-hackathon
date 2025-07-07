@@ -5,14 +5,15 @@ export async function GET(request: NextRequest) {
 	const q = searchParams.get("q");
 
 	if (!q) {
-		return new Response(JSON.stringify({ error: "Missing query param ?q=" }), {
-			status: 400,
-		});
+		return new Response(
+			JSON.stringify({ error: "Missing query param ?q=" }),
+			{ status: 400 }
+		);
 	}
 
 	try {
 		const gbifRes = await fetch(
-			`https://api.gbif.org/v1/species/search?q=${encodeURIComponent(q)}&qField=VERNACULAR&limit=20`
+			`https://api.gbif.org/v1/species/search?q=${encodeURIComponent(q)}&qField=VERNACULAR`
 		);
 
 		if (!gbifRes.ok) {
@@ -21,17 +22,31 @@ export async function GET(request: NextRequest) {
 
 		const data = await gbifRes.json();
 
-		const simplified = data.results.map((item: any) => ({
-			id: item.key,
-            taxonID: item.taxonID || "Unknown",
-			scientificName: item.scientificName || "Unknown",
-		}));
+		const seen = new Set<string>();
+		const simplified = [];
+
+		for (const item of data.results) {
+			if (!item.vernacularNames?.length || !item.canonicalName) continue;
+
+			const vernacular = item.vernacularNames[0]?.vernacularName ?? "Unknown";
+			const uniqueKey = `${item.canonicalName.toLowerCase()}|${vernacular.toLowerCase()}`;
+
+			if (!seen.has(uniqueKey)) {
+				seen.add(uniqueKey);
+				simplified.push({
+					key: item.key,
+					canonicalName: item.canonicalName,
+					vernacularName: vernacular
+				});
+			}
+		}
 
 		return Response.json({ results: simplified });
 	} catch (error) {
 		console.error("Error fetching species:", error);
-		return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-			status: 500,
-		});
+		return new Response(
+			JSON.stringify({ error: "Internal Server Error" }),
+			{ status: 500 }
+		);
 	}
 }
