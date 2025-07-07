@@ -8,9 +8,8 @@ import Stack from "@mui/joy/Stack";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Link } from "@mui/joy";
 import { Close, Shuffle } from "@mui/icons-material";
-import List from "@mui/joy/List";
-import ListItem from "@mui/joy/ListItem";
-import ListItemButton from "@mui/joy/ListItemButton";
+import LocationAutocompleteList from "./LocationAutocompleteList";
+import SpeciesAutocompleteList from "./SpeciesAutocompleteList";
 
 interface SearchProps {
 	tabIndex?: number;
@@ -23,15 +22,22 @@ interface Country {
 	};
 }
 
+interface SpeciesResult {
+	key: number;
+	canonicalName: string;
+	vernacularName: string;
+}
+
 export default function Search({ tabIndex = 0 }: SearchProps) {
 	const [searchValue, setSearchValue] = useState("");
 	const [filteredLocationResults, setFilteredLocationResults] = useState<
 		Country[]
 	>([]);
 	const [filteredSpeciesResults, setFilteredSpeciesResults] = useState<
-		Country[]
+		SpeciesResult[]
 	>([]);
 	const [countries, setCountries] = useState<Country[]>([]);
+	const [suppressFetch, setSuppressFetch] = useState(false);
 
 	useEffect(() => {
 		const fetchCountries = async () => {
@@ -43,6 +49,11 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	}, []);
 
 	useEffect(() => {
+		if (suppressFetch) {
+			setSuppressFetch(false);
+			return;
+		}
+
 		if (searchValue.length > 0 && tabIndex === 1) {
 			const results = countries.filter((c) =>
 				c.description.en
@@ -57,15 +68,17 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 				.then((data) => {
 					if (data.results) {
 						console.log("Species results:", data.results);
+						setFilteredSpeciesResults(data.results);
 					} else {
-						console.error("No results found for species search");
+						setFilteredSpeciesResults([]);
 					}
 				})
-				.catch((error) => {
-					console.error("Error fetching species data:", error);
+				.catch(() => {
+					setFilteredSpeciesResults([]);
 				});
 		} else {
 			setFilteredLocationResults([]);
+			setFilteredSpeciesResults([]);
 		}
 	}, [searchValue, countries]);
 
@@ -74,10 +87,24 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		countryCode: string
 	) => {
 		setSearchValue(countryName);
-		console.log(`Selected country: ${countryName} (${countryCode})`);
 
+		console.log("Selected country:", countryName, countryCode);
 		setTimeout(() => {
 			setFilteredLocationResults([]);
+		}, 0);
+	};
+
+	const handleSpeciesAutocompleteSelect = (
+		name: string,
+		canonicalName: string,
+		key: number
+	) => {
+		setSearchValue(name);
+		setSuppressFetch(true);
+
+		console.log("Selected species:", name, canonicalName, key);
+		setTimeout(() => {
+			setFilteredSpeciesResults([]);
 		}, 0);
 	};
 
@@ -111,38 +138,15 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 							},
 						}}
 					/>
-					{filteredLocationResults.length > 0 && (
-						<List
-							sx={{
-								position: "absolute",
-								top: "100%",
-								left: 0,
-								right: 0,
-								zIndex: 10,
-								backgroundColor: "#fff",
-								borderRadius: "md",
-								mt: 1,
-								boxShadow: "md",
-								maxHeight: 200,
-								overflowY: "auto",
-							}}
-						>
-							{filteredLocationResults.map((country, index) => (
-								<ListItem key={index}>
-									<ListItemButton
-										onClick={() =>
-											handleLocationAutocompleteSelect(
-												country.description.en,
-												country.code
-											)
-										}
-									>
-										{country.description.en}
-									</ListItemButton>
-								</ListItem>
-							))}
-						</List>
-					)}
+					<LocationAutocompleteList
+						locations={filteredLocationResults}
+						onSelect={handleLocationAutocompleteSelect}
+					/>
+
+					<SpeciesAutocompleteList
+						speciesList={filteredSpeciesResults}
+						onSelect={handleSpeciesAutocompleteSelect}
+					/>
 				</FormControl>
 			</Stack>
 			<Link
