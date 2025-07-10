@@ -11,6 +11,8 @@ interface SpeciesResult {
 	key: number;
 	canonicalName: string;
 	vernacularName: string;
+	scientificName?: string;
+	rank?: string;
 }
 
 interface Props {
@@ -57,15 +59,10 @@ export default function SpeciesAutocompleteList({
 							paddingY: 1,
 						}}
 					>
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Typography
-								level="body-md"
-								sx={{
-									fontWeight: "bold",
-									color: "text.primary",
-								}}
-							>
-								{species.vernacularName}
+						<Stack direction="column" spacing={0}>
+							<Typography level="body-md" fontWeight="lg">
+								{species.vernacularName ||
+									species.canonicalName}
 							</Typography>
 							<Typography
 								level="body-sm"

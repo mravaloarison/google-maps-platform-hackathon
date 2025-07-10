@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import FormControl from "@mui/joy/FormControl";
 import Input from "@mui/joy/Input";
 import Stack from "@mui/joy/Stack";
@@ -25,6 +25,9 @@ interface SpeciesResult {
 	key: number;
 	canonicalName: string;
 	vernacularName: string;
+	scientificName?: string;
+	rank?: string;
+	family?: string;
 }
 
 export default function Search({ tabIndex = 0 }: SearchProps) {
@@ -37,6 +40,9 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	>([]);
 	const [countries, setCountries] = useState<Country[]>([]);
 	const [suppressFetch, setSuppressFetch] = useState(false);
+	const [loading, setLoading] = useState(false);
+
+	const controllerRef = useRef<AbortController | null>(null);
 
 	useEffect(() => {
 		const fetchCountries = async () => {
@@ -53,44 +59,59 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 			return;
 		}
 
-		if (searchValue.length > 0 && tabIndex === 1) {
+		if (searchValue.length === 0) {
+			setFilteredLocationResults([]);
+			setFilteredSpeciesResults([]);
+			return;
+		}
+
+		if (tabIndex === 1) {
 			const results = countries.filter((c) =>
 				c.description.en
 					.toLowerCase()
 					.includes(searchValue.toLowerCase())
 			);
 			setFilteredLocationResults(results);
-		} else if (searchValue.length > 0 && tabIndex === 0) {
-			console.log("Fetching species results for:", searchValue);
-			fetch(`/api/gbif_autocomplete_by_common?q=${searchValue}`)
+		} else if (tabIndex === 0) {
+			if (controllerRef.current) {
+				controllerRef.current.abort(); // cancel previous request
+			}
+			const controller = new AbortController();
+			controllerRef.current = controller;
+
+			setLoading(true);
+			fetch(
+				`/api/gbif_autocomplete_by_common?q=${encodeURIComponent(
+					searchValue
+				)}`,
+				{
+					signal: controller.signal,
+				}
+			)
 				.then((res) => res.json())
 				.then((data) => {
 					if (data.results) {
-						console.log("Species results:", data.results);
 						setFilteredSpeciesResults(data.results);
 					} else {
 						setFilteredSpeciesResults([]);
 					}
 				})
-				.catch(() => {
-					setFilteredSpeciesResults([]);
-				});
-		} else {
-			setFilteredLocationResults([]);
-			setFilteredSpeciesResults([]);
+				.catch((err) => {
+					if (err.name !== "AbortError") {
+						console.error("Species fetch failed:", err);
+						setFilteredSpeciesResults([]);
+					}
+				})
+				.finally(() => setLoading(false));
 		}
-	}, [searchValue, countries]);
+	}, [searchValue, tabIndex, countries]);
 
 	const handleLocationAutocompleteSelect = (
 		countryName: string,
 		countryCode: string
 	) => {
 		setSearchValue(countryName);
-
-		console.log("Selected country:", countryName, countryCode);
-		setTimeout(() => {
-			setFilteredLocationResults([]);
-		}, 0);
+		setTimeout(() => setFilteredLocationResults([]), 0);
 	};
 
 	const handleSpeciesAutocompleteSelect = (
@@ -100,11 +121,7 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	) => {
 		setSearchValue(name);
 		setSuppressFetch(true);
-
-		console.log("Selected species:", name, canonicalName, key);
-		setTimeout(() => {
-			setFilteredSpeciesResults([]);
-		}, 0);
+		setTimeout(() => setFilteredSpeciesResults([]), 0);
 	};
 
 	return (
@@ -140,7 +157,6 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 					locations={filteredLocationResults}
 					onSelect={handleLocationAutocompleteSelect}
 				/>
-
 				<SpeciesAutocompleteList
 					speciesList={filteredSpeciesResults}
 					onSelect={handleSpeciesAutocompleteSelect}
