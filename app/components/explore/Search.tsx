@@ -74,14 +74,14 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 			setFilteredLocationResults(results);
 		} else if (tabIndex === 0) {
 			if (controllerRef.current) {
-				controllerRef.current.abort(); // cancel previous request
+				controllerRef.current.abort();
 			}
 			const controller = new AbortController();
 			controllerRef.current = controller;
 
 			setLoading(true);
 			fetch(
-				`/api/gbif_autocomplete_by_common?q=${encodeURIComponent(
+				`/api/gbif_species_autocomplete?q=${encodeURIComponent(
 					searchValue
 				)}`,
 				{
