@@ -22,12 +22,11 @@ interface Country {
 }
 
 interface SpeciesResult {
-	key: number;
-	canonicalName: string;
-	vernacularName: string;
-	scientificName?: string;
-	rank?: string;
-	family?: string;
+	taxon_id: number;
+	common_name: string | null;
+	scientific_name: string;
+	rank: string;
+	image: string | null;
 }
 
 export default function Search({ tabIndex = 0 }: SearchProps) {
@@ -81,21 +80,20 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 
 			setLoading(true);
 			fetch(
-				`/api/gbif_species_autocomplete?q=${encodeURIComponent(
+				`/api/i_naturalist/species_autocomplete?query=${encodeURIComponent(
 					searchValue
 				)}`,
-				{
-					signal: controller.signal,
-				}
+				{ signal: controller.signal }
 			)
 				.then((res) => res.json())
 				.then((data) => {
-					if (data.results) {
-						setFilteredSpeciesResults(data.results);
+					if (Array.isArray(data)) {
+						setFilteredSpeciesResults(data);
 					} else {
 						setFilteredSpeciesResults([]);
 					}
 				})
+
 				.catch((err) => {
 					if (err.name !== "AbortError") {
 						console.error("Species fetch failed:", err);
@@ -115,11 +113,11 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	};
 
 	const handleSpeciesAutocompleteSelect = (
-		name: string,
-		canonicalName: string,
-		key: number
+		common_name: string | null,
+		scientific_name: string,
+		taxon_id: number
 	) => {
-		setSearchValue(name);
+		setSearchValue(common_name ?? scientific_name);
 		setSuppressFetch(true);
 		setTimeout(() => setFilteredSpeciesResults([]), 0);
 	};

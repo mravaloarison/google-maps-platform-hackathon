@@ -8,16 +8,20 @@ import Typography from "@mui/joy/Typography";
 import Stack from "@mui/joy/Stack";
 
 interface SpeciesResult {
-	key: number;
-	canonicalName: string;
-	vernacularName: string;
-	scientificName?: string;
-	rank?: string;
+	taxon_id: number;
+	common_name: string | null;
+	scientific_name: string;
+	rank: string;
+	image: string | null;
 }
 
 interface Props {
 	speciesList: SpeciesResult[];
-	onSelect: (name: string, canonicalName: string, key: number) => void;
+	onSelect: (
+		common_name: string | null,
+		scientific_name: string,
+		taxon_id: number
+	) => void;
 }
 
 export default function SpeciesAutocompleteList({
@@ -43,36 +47,53 @@ export default function SpeciesAutocompleteList({
 			}}
 		>
 			{speciesList.map((species) => (
-				<ListItem key={species.key}>
+				<ListItem key={species.taxon_id}>
 					<ListItemButton
 						onClick={() =>
 							onSelect(
-								species.vernacularName,
-								species.canonicalName,
-								species.key
+								species.common_name,
+								species.scientific_name,
+								species.taxon_id
 							)
 						}
 						color="neutral"
 						sx={{
 							justifyContent: "flex-start",
 							alignItems: "center",
-							paddingY: 1,
+							py: 1,
 						}}
 					>
-						<Stack direction="column" spacing={0}>
-							<Typography level="body-md" fontWeight="lg">
-								{species.vernacularName ||
-									species.canonicalName}
-							</Typography>
-							<Typography
-								level="body-sm"
-								sx={{
-									color: "text.secondary",
-									fontStyle: "italic",
-								}}
-							>
-								{species.canonicalName}
-							</Typography>
+						<Stack direction="row" spacing={1} alignItems="center">
+							{species.image && (
+								<img
+									src={species.image}
+									alt={
+										species.common_name ??
+										species.scientific_name
+									}
+									style={{
+										width: 40,
+										height: 40,
+										borderRadius: 4,
+										objectFit: "cover",
+									}}
+								/>
+							)}
+							<Stack direction="column" spacing={0}>
+								<Typography level="body-md" fontWeight="lg">
+									{species.common_name ??
+										species.scientific_name}
+								</Typography>
+								<Typography
+									level="body-sm"
+									sx={{
+										color: "text.secondary",
+										fontStyle: "italic",
+									}}
+								>
+									{species.scientific_name}
+								</Typography>
+							</Stack>
 						</Stack>
 					</ListItemButton>
 				</ListItem>
