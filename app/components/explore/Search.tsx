@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import FormControl from "@mui/joy/FormControl";
 import Input from "@mui/joy/Input";
@@ -30,6 +31,8 @@ interface SpeciesResult {
 }
 
 export default function Search({ tabIndex = 0 }: SearchProps) {
+	const router = useRouter();
+
 	const [searchValue, setSearchValue] = useState("");
 	const [filteredLocationResults, setFilteredLocationResults] = useState<
 		Country[]
@@ -120,6 +123,8 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		setSearchValue(common_name ?? scientific_name);
 		setSuppressFetch(true);
 		setTimeout(() => setFilteredSpeciesResults([]), 0);
+
+		router.push(`/explore/by/species/${taxon_id}`);
 	};
 
 	return (

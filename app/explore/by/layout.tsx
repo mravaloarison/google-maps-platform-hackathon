@@ -13,7 +13,7 @@ export default function ExploreByLayout({
 		<CssVarsProvider disableTransitionOnChange>
 			<CssBaseline />
 			<Box
-				component="main"
+				component="div"
 				sx={{
 					height: "calc(100vh - 55px)",
 					display: "grid",
