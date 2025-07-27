@@ -2,7 +2,7 @@ import { Box, Typography, Link } from "@mui/joy";
 
 export default function Footer() {
 	return (
-		<Box component="footer" sx={{ py: 3 }}>
+		<Box component="div" sx={{ py: 3 }}>
 			<Typography level="body-xs" sx={{ textAlign: "center" }}>
 				Powered by{" "}
 				<Link
@@ -42,7 +42,7 @@ export default function Footer() {
 				</Link>
 			</Typography>
 			<Typography level="body-xs" sx={{ textAlign: "center" }}>
-				© Built by{" "}
+				&copy; Built by{" "}
 				<Link
 					sx={{
 						fontWeight: "900",

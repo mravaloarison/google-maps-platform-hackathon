@@ -3,6 +3,7 @@ import { CssVarsProvider } from "@mui/joy/styles";
 import CssBaseline from "@mui/joy/CssBaseline";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
+import HeaderSection from "@/app/components/Navbar";
 
 export default function ExploreByLayout({
 	children,
@@ -12,6 +13,7 @@ export default function ExploreByLayout({
 	return (
 		<CssVarsProvider disableTransitionOnChange>
 			<CssBaseline />
+			<HeaderSection />
 			<Box
 				component="div"
 				sx={{
@@ -21,17 +23,7 @@ export default function ExploreByLayout({
 					gridTemplateRows: "auto 1fr auto",
 				}}
 			>
-				<Stack
-					sx={{
-						backgroundColor: "background.surface",
-						px: { xs: 2, md: 4 },
-						py: 2,
-						borderBottom: "1px solid",
-						borderColor: "divider",
-					}}
-				>
-					{children}
-				</Stack>
+				{children}
 				<Box
 					sx={{
 						gridRow: "span 3",

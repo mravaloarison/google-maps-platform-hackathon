@@ -128,7 +128,7 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	};
 
 	return (
-		<Stack spacing={1} direction="row" sx={{ mb: 1.5 }}>
+		<Stack spacing={1} direction="row">
 			<FormControl sx={{ flex: 1 }}>
 				<Input
 					autoComplete="off"

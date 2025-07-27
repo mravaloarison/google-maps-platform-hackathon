@@ -68,6 +68,9 @@ export default function HomeBody() {
 					startDecorator={<Shuffle />}
 					color="success"
 					fontSize="sm"
+					sx={{
+						pt: 1.5,
+					}}
 				>
 					Surprise me!
 				</Link>

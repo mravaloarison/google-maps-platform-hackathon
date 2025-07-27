@@ -1,6 +1,15 @@
 "use client";
 
+import SpeciesBtn from "@/app/components/explore/SpeciesBtn";
+import {
+	GppMaybeOutlined,
+	ScienceOutlined,
+	FavoriteOutlined,
+	FavoriteBorder,
+} from "@mui/icons-material";
+import { Divider, IconButton, ModalClose, Typography } from "@mui/joy";
 import React, { useState, useEffect } from "react";
+import { Button, Modal, ModalDialog, Stack } from "@mui/joy";
 
 interface Observation {
 	observer: string;
@@ -30,6 +39,11 @@ const PER_PAGE = 10;
 
 export default function SpeciesDetailsPage({ params }: PageProps) {
 	const { species_id } = React.use(params);
+
+	const [openSummaryModal, setOpenSummaryModal] = useState(false);
+
+	// TODO: Implement like in db
+	const [isLiked, setIsLiked] = useState(false);
 
 	const [page, setPage] = useState(1);
 	const [speciesDetails, setSpeciesDetails] = useState<SpeciesDetails | null>(
@@ -87,121 +101,178 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 
 	const totalPages = Math.ceil(total_results / PER_PAGE);
 
-	function timeAgo(dateString: string) {
-		const now = new Date();
-		const date = new Date(dateString);
-		const diff = now.getTime() - date.getTime();
-
-		const seconds = Math.floor(diff / 1000);
-		if (seconds < 60)
-			return `${seconds} second${seconds !== 1 ? "s" : ""} ago`;
-
-		const minutes = Math.floor(seconds / 60);
-		if (minutes < 60)
-			return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
-
-		const hours = Math.floor(minutes / 60);
-		if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
-
-		const days = Math.floor(hours / 24);
-		if (days < 30) return `${days} day${days !== 1 ? "s" : ""} ago`;
-
-		const months = Math.floor(days / 30);
-		if (months < 12) return `${months} month${months !== 1 ? "s" : ""} ago`;
-
-		const years = Math.floor(months / 12);
-		return `${years} year${years !== 1 ? "s" : ""} ago`;
-	}
-
 	return (
-		<main style={{ padding: 20 }}>
-			<header style={{ display: "flex", alignItems: "center", gap: 20 }}>
-				{image && (
-					<img
-						src={image}
-						alt={common_name ?? scientific_name}
-						style={{
-							width: 120,
-							height: 120,
-							objectFit: "cover",
-							borderRadius: 8,
-						}}
-					/>
-				)}
-				<div>
-					<h1>{common_name ?? scientific_name}</h1>
-					{common_name && (
-						<h2 style={{ fontStyle: "italic", color: "#555" }}>
-							{scientific_name}
-						</h2>
+		<div>
+			<Stack
+				sx={{
+					backgroundColor: "background.surface",
+					px: { xs: 2, md: 4 },
+					py: 2,
+					borderBottom: "1px solid",
+					borderColor: "divider",
+				}}
+			>
+				<div style={{ display: "flex", alignItems: "start", gap: 20 }}>
+					{image && (
+						<img
+							src={image}
+							alt={common_name ?? scientific_name}
+							style={{
+								width: 120,
+								height: 120,
+								objectFit: "cover",
+								borderRadius: 8,
+							}}
+						/>
 					)}
-					{iucn_status && (
-						<p>
-							<strong>Conservation Status:</strong> {iucn_status}
-						</p>
-					)}
-					{is_endemic !== null && (
-						<p>
-							<strong>Is Endemic:</strong>{" "}
-							{is_endemic ? "Yes" : "No"}
-						</p>
-					)}
-				</div>
-			</header>
-
-			{summary && (
-				<section style={{ marginTop: 20 }}>
-					<h3>Summary</h3>
-					<div
-						dangerouslySetInnerHTML={{ __html: summary ?? "" }}
-						style={{ lineHeight: 1.5 }}
-					/>
-				</section>
-			)}
-
-			<section style={{ marginTop: 30 }}>
-				<h3>
-					Observations (Page {page} of {totalPages})
-				</h3>
-				{observations.length === 0 && <p>No observations found.</p>}
-				<ul style={{ listStyle: "none", paddingLeft: 0 }}>
-					{observations.map((obs, i) => (
-						<li
-							key={`${obs.observer}-${i}`}
+					<div style={{ flex: 1 }}>
+						<div
 							style={{
 								display: "flex",
-								gap: 15,
-								alignItems: "center",
-								padding: 10,
-								borderBottom: "1px solid #ccc",
+								justifyContent: "space-between",
+								width: "100%",
 							}}
 						>
-							{obs.image && (
-								<img
-									src={obs.image}
-									alt={`Observation by ${obs.observer}`}
-									style={{
-										width: 80,
-										height: 80,
-										objectFit: "cover",
-										borderRadius: 6,
+							<Typography level="h3">
+								{common_name ?? scientific_name}
+							</Typography>
+							<IconButton
+								variant={isLiked ? "soft" : "plain"}
+								size="lg"
+								color={isLiked ? "success" : "neutral"}
+								onClick={() => setIsLiked((prev) => !prev)}
+								sx={{
+									display: { xs: "none", sm: "flex" },
+									borderRadius: "50%",
+								}}
+							>
+								{isLiked ? (
+									<FavoriteOutlined />
+								) : (
+									<FavoriteBorder />
+								)}
+							</IconButton>
+						</div>
+						{common_name && (
+							<Typography
+								level="body-md"
+								sx={{
+									fontStyle: "italic",
+								}}
+								color="neutral"
+								startDecorator={
+									<ScienceOutlined color="success" />
+								}
+							>
+								{scientific_name}
+							</Typography>
+						)}
+						{iucn_status && (
+							<Typography
+								level="body-md"
+								variant="soft"
+								color="warning"
+								startDecorator={<GppMaybeOutlined />}
+							>
+								{iucn_status}
+							</Typography>
+						)}
+
+						{is_endemic !== null && (
+							<Typography
+								color={is_endemic ? "success" : "danger"}
+								level="body-sm"
+							>
+								<strong>Is Endemic:</strong>{" "}
+								{is_endemic ? "Yes" : "No"}
+							</Typography>
+						)}
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								width: "100%",
+								paddingTop: 17,
+							}}
+						>
+							<p></p>
+							<Button variant="soft" color="success">
+								Add sighting
+							</Button>
+						</div>
+					</div>
+				</div>
+
+				{summary && (
+					<section style={{ marginTop: 20 }}>
+						<Typography level="title-lg" sx={{ mb: 0.5 }}>
+							Summary
+						</Typography>
+
+						<div
+							dangerouslySetInnerHTML={{ __html: summary ?? "" }}
+							style={{
+								lineHeight: 1.5,
+								display: "-webkit-box",
+								WebkitBoxOrient: "vertical",
+								overflow: "hidden",
+								WebkitLineClamp: 2,
+								maxHeight: "4.5em",
+							}}
+						/>
+
+						<Button
+							variant="outlined"
+							color="neutral"
+							onClick={() => setOpenSummaryModal(true)}
+							sx={{
+								mt: 1.5,
+							}}
+						>
+							Read more
+						</Button>
+
+						<Modal
+							open={openSummaryModal}
+							onClose={() => setOpenSummaryModal(false)}
+						>
+							<ModalDialog>
+								<ModalClose />
+								<Typography level="h4" mb={2}>
+									{common_name ?? scientific_name} – Full
+									Summary
+								</Typography>
+								<div
+									dangerouslySetInnerHTML={{
+										__html: summary ?? "",
 									}}
+									style={{ lineHeight: 1.6 }}
 								/>
-							)}
-							<div>
-								<p>
-									<strong>Observer:</strong> {obs.observer}
-								</p>
-								<p>{timeAgo(obs.observed_on)}</p>
-								<p>
-									<strong>Location:</strong> {obs.location}
-								</p>
-							</div>
-						</li>
+							</ModalDialog>
+						</Modal>
+					</section>
+				)}
+			</Stack>
+
+			<section style={{ marginTop: 30 }}>
+				<Typography>
+					Observations (Page {page} of {totalPages})
+				</Typography>
+				{observations.length === 0 && <p>No observations found.</p>}
+
+				<ul style={{ listStyle: "none", paddingLeft: 0 }}>
+					{observations.map((obs, i) => (
+						<>
+							<SpeciesBtn
+								key={`${obs.observer}-${i}`}
+								obs={obs}
+							/>
+							<Divider />
+						</>
 					))}
 				</ul>
 
-				<nav style={{ marginTop: 20, display: "flex", gap: 10 }}>
+				<div style={{ marginTop: 20, display: "flex", gap: 10 }}>
 					<button
 						disabled={page <= 1}
 						onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -216,8 +287,8 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 					>
 						Next
 					</button>
-				</nav>
+				</div>
 			</section>
-		</main>
+		</div>
 	);
 }

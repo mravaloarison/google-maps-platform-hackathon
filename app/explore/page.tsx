@@ -52,7 +52,7 @@ export default function JoySignInSideTemplate() {
 					}}
 				>
 					<Box
-						component="header"
+						component="div"
 						sx={{
 							py: 3,
 							display: "flex",
@@ -80,7 +80,7 @@ export default function JoySignInSideTemplate() {
 						<ColorSchemeToggle />
 					</Box>
 					<Box
-						component="main"
+						component="div"
 						sx={{
 							my: "auto",
 							py: 2,
