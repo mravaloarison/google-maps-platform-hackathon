@@ -73,7 +73,7 @@ export default function SpeciesBtn({ obs }: { obs: Observation }) {
 				<AspectRatio
 					ratio="1"
 					sx={{
-						minWidth: 120,
+						minWidth: 150,
 					}}
 				>
 					{obs.image && (

@@ -21,8 +21,7 @@ export default function HeaderSection() {
 				alignItems: "center",
 				width: "100%",
 				top: 0,
-				px: 1.5,
-				py: 1,
+				p: 1.5,
 				zIndex: 10000,
 				backgroundColor: "background.body",
 				borderBottom: "1px solid",
@@ -36,7 +35,7 @@ export default function HeaderSection() {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: 1.5,
-					width: { xs: "auto", sm: "400px" },
+					width: { xs: "auto", sm: "430px" },
 				}}
 			>
 				<IconButton

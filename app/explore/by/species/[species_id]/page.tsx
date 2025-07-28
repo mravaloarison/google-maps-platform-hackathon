@@ -114,7 +114,8 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 			<Stack
 				sx={{
 					backgroundColor: "background.surface",
-					padding: 2,
+					py: 2,
+					px: 4,
 					borderBottom: "1px solid",
 					borderColor: "divider",
 				}}
@@ -227,7 +228,7 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 				</Stack>
 			</Stack>
 
-			<Stack spacing={2} sx={{ padding: 2, minHeight: 0 }}>
+			<Stack spacing={2} sx={{ px: 4, py: 2, minHeight: 0 }}>
 				<Filters />
 				{observations.length === 0 && (
 					<Typography>No observations found.</Typography>

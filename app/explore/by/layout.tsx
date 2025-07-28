@@ -19,7 +19,7 @@ export default function ExploreByLayout({
 				sx={{
 					height: "calc(100vh - 55px)",
 					display: "grid",
-					gridTemplateColumns: { xs: "auto", md: "30% 70%" },
+					gridTemplateColumns: { xs: "auto", md: "33% 67%" },
 					gridTemplateRows: "auto 1fr auto",
 				}}
 			>
