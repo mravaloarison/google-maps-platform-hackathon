@@ -1,5 +1,12 @@
-import { AccessTime, PlaceOutlined } from "@mui/icons-material";
-import { Button, Typography, Card } from "@mui/joy";
+import { LocationOn } from "@mui/icons-material";
+import {
+	Typography,
+	Card,
+	CardOverflow,
+	AspectRatio,
+	CardContent,
+	Stack,
+} from "@mui/joy";
 
 interface Observation {
 	observer: string;
@@ -36,57 +43,73 @@ export default function SpeciesBtn({ obs }: { obs: Observation }) {
 		return `${years} year${years !== 1 ? "s" : ""} ago`;
 	}
 
+	const getHighResImage = (url: string) => {
+		return url.replace("square", "medium").replace("small", "medium");
+	};
+
 	return (
-		<Card sx={{ borderRadius: 0, border: "0px solid transparent" }}>
-			<Button
-				variant="outlined"
-				color="neutral"
+		<Card
+			variant="outlined"
+			orientation="horizontal"
+			sx={{
+				bgcolor: "neutral.softBg",
+				display: "flex",
+				flexDirection: "row",
+				"&:hover": {
+					boxShadow: "lg",
+					borderColor:
+						"var(--joy-palette-neutral-outlinedDisabledBorder)",
+				},
+			}}
+		>
+			<CardOverflow
 				sx={{
-					width: "100%",
-					borderRadius: 0,
-					border: "0px solid transparent",
-					display: "flex",
-					justifyContent: "start",
-					gap: 3,
-					alignItems: "start",
-					textAlign: "left",
+					mr: 0,
+					mb: "var(--CardOverflow-offset)",
+					"--AspectRatio-radius":
+						"calc(var(--CardOverflow-radius) - var(--variant-borderWidth, 0px)) 0 0 calc(var(--CardOverflow-radius) - var(--variant-borderWidth, 0px))",
 				}}
-				startDecorator={
-					obs.image && (
-						<img
-							src={obs.image}
-							alt={`Observation by ${obs.observer}`}
-							style={{
-								width: 90,
-								height: 90,
-								objectFit: "cover",
-								borderRadius: 6,
-							}}
-						/>
-					)
-				}
 			>
-				<div
-					style={{
-						display: "flex",
-						flexDirection: "column",
-						gap: 6,
+				<AspectRatio
+					ratio="1"
+					sx={{
+						minWidth: 120,
 					}}
 				>
-					<Typography level="title-sm">
-						By <strong>{obs.observer}</strong>
-					</Typography>
-					<Typography startDecorator={<AccessTime />} level="body-xs">
-						{timeAgo(obs.observed_on)}
-					</Typography>
+					{obs.image && (
+						<img
+							src={obs.image ? getHighResImage(obs.image) : ""}
+							alt={`Observation by ${obs.observer}`}
+							style={{ objectFit: "cover" }}
+						/>
+					)}
+				</AspectRatio>
+			</CardOverflow>
+
+			<CardContent>
+				<Stack
+					sx={{
+						height: "100%",
+						justifyContent: "space-between",
+						flexGrow: 1,
+					}}
+				>
+					<Stack>
+						<Typography sx={{ fontWeight: "md" }}>
+							By <strong>{obs.observer}</strong>
+						</Typography>
+						<Typography level="body-sm">
+							{timeAgo(obs.observed_on)}
+						</Typography>
+					</Stack>
 					<Typography
-						startDecorator={<PlaceOutlined />}
-						level="body-xs"
+						startDecorator={<LocationOn color="success" />}
+						level="body-sm"
 					>
-						{obs.location}
+						{/* {obs.location} */}
 					</Typography>
-				</div>
-			</Button>
+				</Stack>
+			</CardContent>
 		</Card>
 	);
 }

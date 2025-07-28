@@ -1,15 +1,15 @@
 "use client";
 
 import SpeciesBtn from "@/app/components/explore/SpeciesBtn";
-import {
-	GppMaybeOutlined,
-	ScienceOutlined,
-	FavoriteOutlined,
-	FavoriteBorder,
-} from "@mui/icons-material";
-import { Divider, IconButton, ModalClose, Typography } from "@mui/joy";
+import { GppMaybeOutlined, ScienceOutlined } from "@mui/icons-material";
+import { Box, ModalClose, Typography } from "@mui/joy";
 import React, { useState, useEffect } from "react";
 import { Button, Modal, ModalDialog, Stack } from "@mui/joy";
+
+import DescriptionIcon from "@mui/icons-material/Description";
+import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
+import Filters from "@/app/components/explore/Filters";
+import Pagination from "@/app/components/explore/Pagination";
 
 interface Observation {
 	observer: string;
@@ -102,193 +102,150 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	const totalPages = Math.ceil(total_results / PER_PAGE);
 
 	return (
-		<div>
+		<Box
+			sx={{
+				height: "calc(100vh - 55px)",
+				display: "grid",
+				gridTemplateRows: "auto 1fr auto",
+				width: "auto",
+				gridTemplateColumns: "100%",
+			}}
+		>
 			<Stack
 				sx={{
 					backgroundColor: "background.surface",
-					px: { xs: 2, md: 4 },
-					py: 2,
+					padding: 2,
 					borderBottom: "1px solid",
 					borderColor: "divider",
 				}}
 			>
-				<div style={{ display: "flex", alignItems: "start", gap: 20 }}>
-					{image && (
-						<img
-							src={image}
-							alt={common_name ?? scientific_name}
-							style={{
-								width: 120,
-								height: 120,
-								objectFit: "cover",
-								borderRadius: 8,
-							}}
-						/>
-					)}
-					<div style={{ flex: 1 }}>
-						<div
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								width: "100%",
-							}}
-						>
-							<Typography level="h3">
-								{common_name ?? scientific_name}
-							</Typography>
-							<IconButton
-								variant={isLiked ? "soft" : "plain"}
-								size="lg"
-								color={isLiked ? "success" : "neutral"}
-								onClick={() => setIsLiked((prev) => !prev)}
-								sx={{
-									display: { xs: "none", sm: "flex" },
-									borderRadius: "50%",
+				<Stack spacing={1.5} sx={{ mb: 0.7, mt: 0.5 }}>
+					<Stack direction="row" spacing={1.5}>
+						{image && (
+							<img
+								src={image}
+								alt={common_name ?? scientific_name}
+								style={{
+									width: 170,
+									height: 170,
+									objectFit: "cover",
+									borderRadius: 8,
 								}}
-							>
-								{isLiked ? (
-									<FavoriteOutlined />
-								) : (
-									<FavoriteBorder />
-								)}
-							</IconButton>
-						</div>
-						{common_name && (
-							<Typography
-								level="body-md"
-								sx={{
-									fontStyle: "italic",
-								}}
-								color="neutral"
-								startDecorator={
-									<ScienceOutlined color="success" />
-								}
-							>
-								{scientific_name}
-							</Typography>
-						)}
-						{iucn_status && (
-							<Typography
-								level="body-md"
-								variant="soft"
-								color="warning"
-								startDecorator={<GppMaybeOutlined />}
-							>
-								{iucn_status}
-							</Typography>
+							/>
 						)}
 
-						{is_endemic !== null && (
-							<Typography
-								color={is_endemic ? "success" : "danger"}
-								level="body-sm"
-							>
-								<strong>Is Endemic:</strong>{" "}
-								{is_endemic ? "Yes" : "No"}
-							</Typography>
-						)}
-						<div
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								width: "100%",
-								paddingTop: 17,
-							}}
-						>
-							<p></p>
-							<Button variant="soft" color="success">
-								Add sighting
-							</Button>
-						</div>
-					</div>
-				</div>
-
-				{summary && (
-					<section style={{ marginTop: 20 }}>
-						<Typography level="title-lg" sx={{ mb: 0.5 }}>
-							Summary
-						</Typography>
-
-						<div
-							dangerouslySetInnerHTML={{ __html: summary ?? "" }}
-							style={{
-								lineHeight: 1.5,
-								display: "-webkit-box",
-								WebkitBoxOrient: "vertical",
-								overflow: "hidden",
-								WebkitLineClamp: 2,
-								maxHeight: "4.5em",
-							}}
-						/>
-
-						<Button
-							variant="outlined"
-							color="neutral"
-							onClick={() => setOpenSummaryModal(true)}
-							sx={{
-								mt: 1.5,
-							}}
-						>
-							Read more
-						</Button>
-
-						<Modal
-							open={openSummaryModal}
-							onClose={() => setOpenSummaryModal(false)}
-						>
-							<ModalDialog>
-								<ModalClose />
-								<Typography level="h4" mb={2}>
-									{common_name ?? scientific_name} – Full
-									Summary
+						{summary && (
+							<Stack sx={{ flexGrow: 1 }}>
+								<Typography level="title-lg">
+									{common_name ?? scientific_name}
 								</Typography>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: summary ?? "",
-									}}
-									style={{ lineHeight: 1.6 }}
-								/>
-							</ModalDialog>
-						</Modal>
-					</section>
-				)}
+								{common_name && (
+									<Typography
+										level="body-md"
+										color="neutral"
+										startDecorator={
+											<ScienceOutlined color="success" />
+										}
+										sx={{
+											paddingTop: 0.5,
+										}}
+									>
+										{scientific_name}
+									</Typography>
+								)}
+								{iucn_status && (
+									<Typography
+										level="body-md"
+										variant="soft"
+										color="warning"
+										startDecorator={<GppMaybeOutlined />}
+									>
+										{iucn_status}
+									</Typography>
+								)}
+
+								{is_endemic !== null && (
+									<Typography
+										color={
+											is_endemic ? "success" : "danger"
+										}
+										level="body-sm"
+									>
+										<strong>Is Endemic:</strong>{" "}
+										{is_endemic ? "Yes" : "No"}
+									</Typography>
+								)}
+								<Stack
+									spacing={1.5}
+									useFlexGap
+									sx={{ mt: "auto" }}
+								>
+									<Button
+										variant="soft"
+										color="neutral"
+										onClick={() =>
+											setOpenSummaryModal(true)
+										}
+										startDecorator={<DescriptionIcon />}
+									>
+										Read details
+									</Button>
+
+									<Button
+										variant="soft"
+										color="success"
+										sx={{
+											width: "100%",
+											justifyContent: "center",
+										}}
+										startDecorator={<AddLocationAltIcon />}
+									>
+										Add sighting
+									</Button>
+								</Stack>
+							</Stack>
+						)}
+					</Stack>
+
+					<Modal
+						open={openSummaryModal}
+						onClose={() => setOpenSummaryModal(false)}
+					>
+						<ModalDialog>
+							<ModalClose />
+							<Typography level="h4" mb={2}>
+								{common_name ?? scientific_name} – Full Summary
+							</Typography>
+							<div
+								dangerouslySetInnerHTML={{
+									__html: summary ?? "",
+								}}
+								style={{ lineHeight: 1.6 }}
+							/>
+						</ModalDialog>
+					</Modal>
+				</Stack>
 			</Stack>
 
-			<section style={{ marginTop: 30 }}>
-				<Typography>
-					Observations (Page {page} of {totalPages})
-				</Typography>
-				{observations.length === 0 && <p>No observations found.</p>}
+			<Stack spacing={2} sx={{ padding: 2, minHeight: 0 }}>
+				<Filters />
+				{observations.length === 0 && (
+					<Typography>No observations found.</Typography>
+				)}
 
-				<ul style={{ listStyle: "none", paddingLeft: 0 }}>
+				<Stack spacing={2} sx={{ overflow: "auto" }}>
+					{" "}
 					{observations.map((obs, i) => (
-						<>
-							<SpeciesBtn
-								key={`${obs.observer}-${i}`}
-								obs={obs}
-							/>
-							<Divider />
-						</>
+						<SpeciesBtn key={`${obs.observer}-${i}`} obs={obs} />
 					))}
-				</ul>
+				</Stack>
+			</Stack>
 
-				<div style={{ marginTop: 20, display: "flex", gap: 10 }}>
-					<button
-						disabled={page <= 1}
-						onClick={() => setPage((p) => Math.max(1, p - 1))}
-					>
-						Previous
-					</button>
-					<button
-						disabled={page >= totalPages}
-						onClick={() =>
-							setPage((p) => Math.min(totalPages, p + 1))
-						}
-					>
-						Next
-					</button>
-				</div>
-			</section>
-		</div>
+			<Pagination
+				totalPages={totalPages}
+				currentPage={page}
+				onPageChange={setPage}
+			/>
+		</Box>
 	);
 }

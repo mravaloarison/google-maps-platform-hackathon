@@ -36,6 +36,7 @@ export default function HeaderSection() {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: 1.5,
+					width: { xs: "auto", sm: "400px" },
 				}}
 			>
 				<IconButton
