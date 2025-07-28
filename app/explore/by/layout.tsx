@@ -17,10 +17,9 @@ export default function ExploreByLayout({
 			<Box
 				component="div"
 				sx={{
-					height: "calc(100vh - 55px)",
+					height: "calc(100vh - 80px)",
 					display: "grid",
 					gridTemplateColumns: { xs: "auto", md: "33% 67%" },
-					gridTemplateRows: "auto 1fr auto",
 				}}
 			>
 				{children}

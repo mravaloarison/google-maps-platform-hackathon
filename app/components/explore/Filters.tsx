@@ -12,6 +12,7 @@ import ModalClose from "@mui/joy/ModalClose";
 import Stack from "@mui/joy/Stack";
 import Slider, { sliderClasses } from "@mui/joy/Slider";
 import FilterAltOutlined from "@mui/icons-material/FilterAltOutlined";
+import SortSpeciesResult from "./SortSpeciesResult";
 
 function valueText(value: number) {
 	return `$${value.toLocaleString("en-US")}`;
@@ -38,7 +39,7 @@ export default function Filters() {
 			>
 				Filters
 			</Button>
-			{/* <OrderSelector /> */}
+			<SortSpeciesResult />
 			<Drawer open={open} onClose={() => setOpen(false)}>
 				<Stack useFlexGap spacing={3} sx={{ p: 2 }}>
 					<DialogTitle>Filters</DialogTitle>

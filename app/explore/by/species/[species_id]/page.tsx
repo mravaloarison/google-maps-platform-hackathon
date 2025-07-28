@@ -1,15 +1,17 @@
 "use client";
 
 import SpeciesBtn from "@/app/components/explore/SpeciesBtn";
-import { GppMaybeOutlined, ScienceOutlined } from "@mui/icons-material";
-import { Box, ModalClose, Typography } from "@mui/joy";
+import { Box, Typography } from "@mui/joy";
 import React, { useState, useEffect } from "react";
-import { Button, Modal, ModalDialog, Stack } from "@mui/joy";
+import { Button, Stack } from "@mui/joy";
 
 import DescriptionIcon from "@mui/icons-material/Description";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import Filters from "@/app/components/explore/Filters";
 import Pagination from "@/app/components/explore/Pagination";
+
+import LinearProgress from "@mui/joy/LinearProgress";
+import HeaderSectionSpeciesResult from "@/app/components/explore/HeaderSectionSpeciesResult";
 
 interface Observation {
 	observer: string;
@@ -24,9 +26,9 @@ interface SpeciesDetails {
 	common_name?: string;
 	scientific_name?: string;
 	image?: string;
-	summary?: string;
-	iucn_status?: string | null;
-	is_endemic?: boolean | null;
+	image_attribution?: string;
+	photos?: { url: string | null; attribution: string | null }[];
+	wikipidia_url?: string | null;
 	page: number;
 	total_results: number;
 	observations: Observation[];
@@ -77,24 +79,63 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	}, [species_id, page]);
 
 	if (loading) {
-		return <p>Loading species details...</p>;
+		return (
+			<Box
+				sx={{
+					height: "calc(100vh - 70px)",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					bgcolor: "background.surface",
+					px: 2,
+				}}
+			>
+				<LinearProgress color="success" variant="soft" />
+			</Box>
+		);
 	}
 
 	if (error) {
-		return <p style={{ color: "red" }}>Error: {error}</p>;
+		return (
+			<Box
+				sx={{
+					height: "calc(100vh - 70px)",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					bgcolor: "background.surface",
+					px: 2,
+				}}
+			>
+				<Typography color="danger">Error: {error}</Typography>
+			</Box>
+		);
 	}
 
 	if (!speciesDetails) {
-		return <p>No data available.</p>;
+		return (
+			<Box
+				sx={{
+					height: "calc(100vh - 70px)",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					bgcolor: "background.surface",
+					px: 2,
+				}}
+			>
+				<Typography>No data available.</Typography>
+			</Box>
+		);
 	}
 
 	const {
 		common_name,
 		scientific_name,
 		image,
-		summary,
-		iucn_status,
-		is_endemic,
+		image_attribution,
+		photos,
+		wikipidia_url,
 		observations,
 		total_results,
 	} = speciesDetails;
@@ -104,7 +145,7 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	return (
 		<Box
 			sx={{
-				height: "calc(100vh - 55px)",
+				height: "calc(100vh - 70px)",
 				display: "grid",
 				gridTemplateRows: "auto 1fr auto",
 				width: "auto",
@@ -114,118 +155,17 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 			<Stack
 				sx={{
 					backgroundColor: "background.surface",
-					py: 2,
 					px: 4,
 					borderBottom: "1px solid",
 					borderColor: "divider",
 				}}
 			>
-				<Stack spacing={1.5} sx={{ mb: 0.7, mt: 0.5 }}>
-					<Stack direction="row" spacing={1.5}>
-						{image && (
-							<img
-								src={image}
-								alt={common_name ?? scientific_name}
-								style={{
-									width: 170,
-									height: 170,
-									objectFit: "cover",
-									borderRadius: 8,
-								}}
-							/>
-						)}
-
-						{summary && (
-							<Stack sx={{ flexGrow: 1 }}>
-								<Typography level="title-lg">
-									{common_name ?? scientific_name}
-								</Typography>
-								{common_name && (
-									<Typography
-										level="body-md"
-										color="neutral"
-										startDecorator={
-											<ScienceOutlined color="success" />
-										}
-										sx={{
-											paddingTop: 0.5,
-										}}
-									>
-										{scientific_name}
-									</Typography>
-								)}
-								{iucn_status && (
-									<Typography
-										level="body-md"
-										variant="soft"
-										color="warning"
-										startDecorator={<GppMaybeOutlined />}
-									>
-										{iucn_status}
-									</Typography>
-								)}
-
-								{is_endemic !== null && (
-									<Typography
-										color={
-											is_endemic ? "success" : "danger"
-										}
-										level="body-sm"
-									>
-										<strong>Is Endemic:</strong>{" "}
-										{is_endemic ? "Yes" : "No"}
-									</Typography>
-								)}
-								<Stack
-									spacing={1.5}
-									useFlexGap
-									sx={{ mt: "auto" }}
-								>
-									<Button
-										variant="soft"
-										color="neutral"
-										onClick={() =>
-											setOpenSummaryModal(true)
-										}
-										startDecorator={<DescriptionIcon />}
-									>
-										Read details
-									</Button>
-
-									<Button
-										variant="soft"
-										color="success"
-										sx={{
-											width: "100%",
-											justifyContent: "center",
-										}}
-										startDecorator={<AddLocationAltIcon />}
-									>
-										Add sighting
-									</Button>
-								</Stack>
-							</Stack>
-						)}
-					</Stack>
-
-					<Modal
-						open={openSummaryModal}
-						onClose={() => setOpenSummaryModal(false)}
-					>
-						<ModalDialog>
-							<ModalClose />
-							<Typography level="h4" mb={2}>
-								{common_name ?? scientific_name} – Full Summary
-							</Typography>
-							<div
-								dangerouslySetInnerHTML={{
-									__html: summary ?? "",
-								}}
-								style={{ lineHeight: 1.6 }}
-							/>
-						</ModalDialog>
-					</Modal>
-				</Stack>
+				<HeaderSectionSpeciesResult
+					commonName={common_name}
+					scientificName={scientific_name}
+					photos={photos}
+					wikipediaUrl={wikipidia_url}
+				/>
 			</Stack>
 
 			<Stack spacing={2} sx={{ px: 4, py: 2, minHeight: 0 }}>

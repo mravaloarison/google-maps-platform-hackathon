@@ -10,12 +10,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const taxonData = page === 1
-      ? await fetch(`https://api.inaturalist.org/v1/taxa/${taxonId}`).then(res => res.json())
-      : null;
+    const taxonData = await fetch(`https://api.inaturalist.org/v1/taxa/${taxonId}`).then(res => res.json());
     const taxon = taxonData?.results?.[0];
 
-    const obsRes = await fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxonId}&verifiable=true&order_by=created_at&per_page=10&page=${page}`);
+    const obsRes = await fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxonId}&verifiable=true&per_page=10&page=${page}`);
     const obsData = await obsRes.json();
 
     const observations = obsData.results.map((obs: any) => ({
@@ -33,14 +31,19 @@ export async function GET(req: NextRequest) {
       observations,
     };
 
-    if (page === 1 && taxon) {
+    if (taxon) {
       Object.assign(baseResponse, {
         common_name: taxon.preferred_common_name,
         scientific_name: taxon.name,
         image: taxon.default_photo?.medium_url,
-        summary: taxon.wikipedia_summary,
-        iucn_status: taxon.conservation_status?.status_name ?? null,
-        is_endemic: taxon.is_endemic ?? null,
+        image_attribution: taxon.default_photo?.attribution,
+        photos: taxon.taxon_photos?.map((res: any) => {
+          return {
+            url: res.photo?.original_url || null,
+            attribution: res.photo?.attribution || null,
+          }
+        }),
+        wikipidia_url: taxon.wikipedia_url || null,
       });
     }
 

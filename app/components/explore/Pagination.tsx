@@ -23,7 +23,7 @@ export default function Pagination({
 				sx={{
 					display: "flex",
 					alignItems: "center",
-					mx: 2,
+					mx: 4,
 					mb: 2,
 				}}
 			>

@@ -73,7 +73,7 @@ export default function SpeciesBtn({ obs }: { obs: Observation }) {
 				<AspectRatio
 					ratio="1"
 					sx={{
-						minWidth: 150,
+						minWidth: 106,
 					}}
 				>
 					{obs.image && (
@@ -106,7 +106,7 @@ export default function SpeciesBtn({ obs }: { obs: Observation }) {
 						startDecorator={<LocationOn color="success" />}
 						level="body-sm"
 					>
-						{/* {obs.location} */}
+						{obs.location}
 					</Typography>
 				</Stack>
 			</CardContent>
