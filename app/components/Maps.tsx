@@ -1,12 +1,12 @@
 "use client";
 
+import { Marker, MarkerClusterer } from "@googlemaps/markerclusterer";
 import {
-	AdvancedMarker,
 	APIProvider,
 	Map as GoogleMap,
 	useMap,
 } from "@vis.gl/react-google-maps";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Species {
 	key: string;
@@ -41,14 +41,8 @@ export default function GoogleMapsLayout() {
 		};
 
 		loadSpecies();
-
-		const handleSpeciesUpdated = () => {
-			loadSpecies();
-		};
-
-		window.addEventListener("species-updated", handleSpeciesUpdated);
-		return () =>
-			window.removeEventListener("species-updated", handleSpeciesUpdated);
+		window.addEventListener("species-updated", loadSpecies);
+		return () => window.removeEventListener("species-updated", loadSpecies);
 	}, []);
 
 	return (
@@ -72,13 +66,36 @@ type Props = {
 };
 
 const Markers = ({ points }: Props) => {
-	return (
-		<>
-			{points.map((point) => (
-				<AdvancedMarker position={point} key={point.key} />
-			))}
-		</>
-	);
+	const map = useMap();
+	const clusterer = useRef<MarkerClusterer | null>(null);
+	const markersRef = useRef<{ [key: string]: Marker }>({});
+
+	useEffect(() => {
+		if (!map) return;
+		if (!clusterer.current) {
+			clusterer.current = new MarkerClusterer({ map });
+		}
+	}, [map]);
+
+	useEffect(() => {
+		if (!map || !clusterer.current) return;
+
+		clusterer.current.clearMarkers();
+		markersRef.current = {};
+
+		const newMarkers: { [key: string]: Marker } = {};
+		points.forEach((point) => {
+			const marker = new google.maps.Marker({
+				position: point,
+			});
+			newMarkers[point.key] = marker;
+		});
+
+		markersRef.current = newMarkers;
+		clusterer.current.addMarkers(Object.values(newMarkers));
+	}, [points, map]);
+
+	return null;
 };
 
 const FitBounds = ({ points }: { points: Points[] }) => {
