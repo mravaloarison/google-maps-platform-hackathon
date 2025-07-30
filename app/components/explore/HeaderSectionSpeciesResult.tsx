@@ -17,6 +17,7 @@ interface SpeciesHeaderProps {
 	scientificName?: string;
 	photos?: Photo[];
 	wikipediaUrl?: string | null;
+	total_results?: number;
 }
 
 export default function HeaderSectionSpeciesResult({
@@ -24,6 +25,7 @@ export default function HeaderSectionSpeciesResult({
 	scientificName,
 	photos,
 	wikipediaUrl,
+	total_results,
 }: SpeciesHeaderProps) {
 	const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -105,6 +107,9 @@ export default function HeaderSectionSpeciesResult({
 						Add sighting
 					</Button>
 				</Stack>
+				<Typography level="body-sm" color="neutral" sx={{ mt: 2 }}>
+					{total_results} results found
+				</Typography>
 			</Stack>
 
 			<Drawer

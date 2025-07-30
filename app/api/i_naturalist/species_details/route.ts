@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const obsData = await obsRes.json();
 
     const observations = obsData.results.map((obs: any) => ({
-      observer: obs.user?.login ?? 'Unknown',
+      observer: obs.user?.name ?? obs.user?.login ?? 'Unknown',
       observed_on: obs.observed_on_details?.date || obs.observed_on,
       time_observed_at: obs.time_observed_at ?? null,
       location: obs.location ?? 'Unknown',

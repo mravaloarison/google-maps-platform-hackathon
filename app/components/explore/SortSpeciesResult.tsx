@@ -2,12 +2,11 @@ import * as React from "react";
 import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
-import { SwapVert } from "@mui/icons-material";
 
 export default function SortSpeciesResult() {
 	return (
 		<Select
-			placeholder="Sort by"
+			placeholder="Order by"
 			indicator={<KeyboardArrowDown />}
 			sx={{
 				[`& .${selectClasses.indicator}`]: {
@@ -17,7 +16,7 @@ export default function SortSpeciesResult() {
 					},
 				},
 			}}
-			startDecorator={<SwapVert />}
+			disabled
 		>
 			<Option value="dog">earliest</Option>
 			<Option value="cat">latest</Option>

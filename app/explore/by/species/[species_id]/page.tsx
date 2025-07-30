@@ -181,6 +181,7 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 					scientificName={scientific_name}
 					photos={photos}
 					wikipediaUrl={wikipidia_url}
+					total_results={total_results}
 				/>
 			</Stack>
 
