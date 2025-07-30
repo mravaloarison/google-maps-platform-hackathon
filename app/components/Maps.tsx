@@ -1,0 +1,93 @@
+"use client";
+
+import {
+	AdvancedMarker,
+	APIProvider,
+	Map as GoogleMap,
+	useMap,
+} from "@vis.gl/react-google-maps";
+import { useEffect, useState } from "react";
+
+interface Species {
+	key: string;
+	lat: number;
+	lng: number;
+}
+
+export default function GoogleMapsLayout() {
+	const [species, setSpecies] = useState<Species[]>([]);
+
+	useEffect(() => {
+		const loadSpecies = () => {
+			const storedSpecies = localStorage.getItem("species");
+			if (storedSpecies) {
+				const parsed = JSON.parse(storedSpecies);
+				console.log("loadSpecies called, loaded count:", parsed.length);
+
+				const formattedSpecies = parsed.map((obs: any) => ({
+					key: `${obs.observer}-${obs.observed_on}`,
+					lat: parseFloat(obs.location.split(",")[0]),
+					lng: parseFloat(obs.location.split(",")[1]),
+				}));
+
+				const uniqueSpecies: any = Array.from(
+					new Map(
+						formattedSpecies.map((item: any) => [item.key, item])
+					).values()
+				);
+
+				setSpecies(uniqueSpecies);
+			}
+		};
+
+		loadSpecies();
+
+		const handleSpeciesUpdated = () => {
+			loadSpecies();
+		};
+
+		window.addEventListener("species-updated", handleSpeciesUpdated);
+		return () =>
+			window.removeEventListener("species-updated", handleSpeciesUpdated);
+	}, []);
+
+	return (
+		<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+			<GoogleMap
+				style={{ width: "100%", height: "100%" }}
+				defaultCenter={{ lat: 22.54992, lng: 0 }}
+				defaultZoom={7}
+				mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || ""}
+			>
+				<Markers points={species} />
+				<FitBounds points={species} />
+			</GoogleMap>
+		</APIProvider>
+	);
+}
+
+type Points = google.maps.LatLngLiteral & { key: string };
+type Props = {
+	points: Points[];
+};
+
+const Markers = ({ points }: Props) => {
+	return (
+		<>
+			{points.map((point) => (
+				<AdvancedMarker position={point} key={point.key} />
+			))}
+		</>
+	);
+};
+
+const FitBounds = ({ points }: { points: Points[] }) => {
+	const map = useMap();
+	useEffect(() => {
+		if (!map || points.length === 0) return;
+		const bounds = new google.maps.LatLngBounds();
+		points.forEach((p) => bounds.extend(p));
+		map.fitBounds(bounds);
+	}, [map, points]);
+	return null;
+};

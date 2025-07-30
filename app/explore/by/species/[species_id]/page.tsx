@@ -37,7 +37,7 @@ interface SpeciesDetails {
 interface PageProps {
 	params: Promise<{ species_id: string }>;
 }
-const PER_PAGE = 10;
+const PER_PAGE = 20;
 
 export default function SpeciesDetailsPage({ params }: PageProps) {
 	const { species_id } = React.use(params);
@@ -77,6 +77,22 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	useEffect(() => {
 		fetchSpeciesDetails(species_id, page);
 	}, [species_id, page]);
+
+	useEffect(() => {
+		if (speciesDetails && speciesDetails.observations.length > 0) {
+			localStorage.setItem(
+				"species",
+				JSON.stringify(speciesDetails.observations)
+			);
+
+			window.dispatchEvent(new Event("species-updated"));
+
+			console.log(
+				"Species observations saved to localStorage:",
+				speciesDetails.observations
+			);
+		}
+	}, [speciesDetails]);
 
 	if (loading) {
 		return (

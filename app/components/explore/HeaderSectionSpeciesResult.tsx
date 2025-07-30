@@ -5,6 +5,7 @@ import { Box, Stack, Typography, Button, Drawer, IconButton } from "@mui/joy";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import CloseIcon from "@mui/icons-material/Close";
+import { Science } from "@mui/icons-material";
 
 interface Photo {
 	url: string | null;
@@ -61,21 +62,14 @@ export default function HeaderSectionSpeciesResult({
 					mt: 1,
 				}}
 			>
-				<Typography
-					level="h2"
-					sx={{
-						textAlign: "center",
-					}}
-				>
+				<Typography level="h2">
 					{capitalizeFirstLetter(commonName) ?? scientificName}
 				</Typography>
 				{commonName && (
 					<Typography
 						level="body-md"
 						color="neutral"
-						sx={{
-							textAlign: "center",
-						}}
+						startDecorator={<Science color="success" />}
 					>
 						{scientificName}
 					</Typography>
@@ -106,6 +100,7 @@ export default function HeaderSectionSpeciesResult({
 						sx={{
 							width: "100%",
 						}}
+						disabled
 					>
 						Add sighting
 					</Button>
@@ -117,6 +112,9 @@ export default function HeaderSectionSpeciesResult({
 				open={openDrawer}
 				onClose={toggleDrawer(false)}
 				size="lg"
+				sx={{
+					zIndex: 12000,
+				}}
 			>
 				<Box
 					sx={{
