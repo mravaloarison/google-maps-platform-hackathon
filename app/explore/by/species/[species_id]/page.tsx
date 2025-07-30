@@ -18,6 +18,7 @@ interface Observation {
 	observed_on: string;
 	time_observed_at: string | null;
 	location: string;
+	place_guess: string | null;
 	image: string | null;
 }
 

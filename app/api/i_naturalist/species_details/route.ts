@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
       observed_on: obs.observed_on_details?.date || obs.observed_on,
       time_observed_at: obs.time_observed_at ?? null,
       location: obs.location ?? 'Unknown',
+      place_guess: obs.place_guess ?? null,
       image: obs.photos?.[0]?.url ?? null,
     }));
 

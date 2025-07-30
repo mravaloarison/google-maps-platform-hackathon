@@ -13,6 +13,7 @@ interface Observation {
 	observed_on: string;
 	time_observed_at: string | null;
 	location: string;
+	place_guess: string | null;
 	image: string | null;
 }
 
@@ -106,7 +107,7 @@ export default function SpeciesBtn({ obs }: { obs: Observation }) {
 						startDecorator={<LocationOn color="success" />}
 						level="body-sm"
 					>
-						{obs.location}
+						{obs.place_guess || "unknown location"}
 					</Typography>
 				</Stack>
 			</CardContent>
