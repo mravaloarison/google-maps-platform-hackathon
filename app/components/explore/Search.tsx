@@ -113,6 +113,8 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	) => {
 		setSearchValue(countryName);
 		setTimeout(() => setFilteredLocationResults([]), 0);
+
+		router.push(`/explore/by/locations/${countryCode}`);
 	};
 
 	const handleSpeciesAutocompleteSelect = (

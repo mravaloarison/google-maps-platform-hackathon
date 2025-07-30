@@ -96,7 +96,17 @@ export default function SpeciesBtn({ obs }: { obs: Observation }) {
 					}}
 				>
 					<Stack>
-						<Typography sx={{ fontWeight: "md" }}>
+						<Typography
+							sx={{
+								fontWeight: "md",
+								// overflow hidden truncate
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								display: "-webkit-box",
+								WebkitLineClamp: 1,
+								WebkitBoxOrient: "vertical",
+							}}
+						>
 							By <strong>{obs.observer}</strong>
 						</Typography>
 						<Typography level="body-sm">
@@ -106,6 +116,13 @@ export default function SpeciesBtn({ obs }: { obs: Observation }) {
 					<Typography
 						startDecorator={<LocationOn color="success" />}
 						level="body-sm"
+						sx={{
+							overflow: "hidden",
+							textOverflow: "ellipsis",
+							display: "-webkit-box",
+							WebkitLineClamp: 1,
+							WebkitBoxOrient: "vertical",
+						}}
 					>
 						{obs.place_guess || "unknown location"}
 					</Typography>

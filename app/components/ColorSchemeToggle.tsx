@@ -4,31 +4,30 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { useColorScheme } from "@mui/joy";
 import IconButton, { IconButtonProps } from "@mui/joy/IconButton";
-import * as React from "react";
 
 export default function ColorSchemeToggle(props: IconButtonProps) {
-	const { onClick, ...other } = props;
 	const { mode, setMode } = useColorScheme();
-	const [mounted, setMounted] = React.useState(false);
 
-	React.useEffect(() => setMounted(true), []);
+	if (mode === undefined) {
+		return null;
+	}
 
 	return (
 		<IconButton
-			aria-label="toggle light/dark mode"
+			id="toggle-mode"
 			size="sm"
 			variant="outlined"
-			disabled={!mounted}
-			onClick={(event) => {
+			color="neutral"
+			aria-label="toggle light/dark mode"
+			onClick={() => {
 				setMode(mode === "light" ? "dark" : "light");
-				onClick?.(event);
 			}}
-			{...other}
+			{...props}
 		>
 			{mode === "light" ? (
-				<DarkModeRoundedIcon />
-			) : (
 				<LightModeRoundedIcon />
+			) : (
+				<DarkModeRoundedIcon />
 			)}
 		</IconButton>
 	);

@@ -9,7 +9,14 @@ import IconButton from "@mui/joy/IconButton";
 import Typography from "@mui/joy/Typography";
 import Footer from "../components/Footer";
 
-import ColorSchemeToggle from "../components/ColorSchemeToggle";
+// import ColorSchemeToggle from "../components/ColorSchemeToggle";
+import dynamic from "next/dynamic";
+
+const ColorSchemeToggle = dynamic(
+	() => import("@/app/components/ColorSchemeToggle"),
+	{ ssr: false }
+);
+
 import HeaderSection from "../components/HeaderSection";
 import { NaturePeople } from "@mui/icons-material";
 import HomeBody from "../components/explore/HomeBody";

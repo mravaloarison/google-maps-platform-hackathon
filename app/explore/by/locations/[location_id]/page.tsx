@@ -1,9 +1,16 @@
-import Search from "@/app/components/explore/Search";
+"use client";
 
-export default function LocationPage() {
+import Search from "@/app/components/explore/Search";
+import React from "react";
+
+interface PageProps {
+	params: Promise<{ country_code: string }>;
+}
+
+export default function LocationPage({ params }: PageProps) {
+	const { country_code } = React.use(params);
+
 	return (
-		<>
-			<Search tabIndex={0} />
-		</>
+		<div>{country_code}</div>
 	);
 }

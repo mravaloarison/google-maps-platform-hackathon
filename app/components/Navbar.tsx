@@ -5,9 +5,16 @@ import { Box, IconButton } from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import Avatar from "@mui/joy/Avatar";
 import { ArrowBack } from "@mui/icons-material";
-import ColorSchemeToggle from "./ColorSchemeToggle";
+// import ColorSchemeToggle from "./ColorSchemeToggle";
 import Search from "./explore/Search";
 import { useRouter } from "next/navigation";
+
+import dynamic from "next/dynamic";
+
+const ColorSchemeToggle = dynamic(
+	() => import("@/app/components/ColorSchemeToggle"),
+	{ ssr: false }
+);
 
 export default function HeaderSection() {
 	const router = useRouter();
