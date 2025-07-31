@@ -1,8 +1,23 @@
 "use client";
 
 import * as React from "react";
-import { Box, IconButton, CircularProgress, Menu, MenuItem } from "@mui/joy";
-import { ArrowBack, Home, Settings } from "@mui/icons-material";
+import {
+	Box,
+	IconButton,
+	CircularProgress,
+	Menu,
+	MenuItem,
+	Typography,
+	MenuButton,
+	Dropdown,
+} from "@mui/joy";
+import {
+	ArrowBack,
+	EmojiNature,
+	Home,
+	Place,
+	Settings,
+} from "@mui/icons-material";
 // import ColorSchemeToggle from "./ColorSchemeToggle";
 import Search from "./explore/Search";
 import { useRouter, usePathname } from "next/navigation";
@@ -26,7 +41,11 @@ export default function HeaderSection() {
 	const [searchTabIndex, setSearchTabIndex] = useState(isSpeciesId ? 0 : 1);
 
 	const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
+		if (anchorEl) {
+			setAnchorEl(null);
+		} else {
+			setAnchorEl(event.currentTarget);
+		}
 	};
 
 	const handleCloseMenu = () => {
@@ -79,27 +98,41 @@ export default function HeaderSection() {
 					<Home />
 				</IconButton>
 				<Search tabIndex={searchTabIndex} />
-				<IconButton onClick={handleOpenMenu}>
-					<Settings />
-				</IconButton>
-				<Menu
-					anchorEl={anchorEl}
-					open={Boolean(anchorEl)}
-					onClose={handleCloseMenu}
-				>
-					<MenuItem
-						selected={searchTabIndex === 1}
-						onClick={() => handleSelectMode("location")}
+				<Dropdown>
+					<MenuButton
+						slots={{ root: IconButton }}
+						slotProps={{
+							root: { variant: "outlined", color: "neutral" },
+						}}
 					>
-						Search by Location
-					</MenuItem>
-					<MenuItem
-						selected={searchTabIndex === 0}
-						onClick={() => handleSelectMode("species")}
+						<Settings />
+					</MenuButton>
+					<Menu
+						placement="bottom-start"
+						sx={{ zIndex: 10000 }}
 					>
-						Search by Species
-					</MenuItem>
-				</Menu>
+						<MenuItem
+							selected={searchTabIndex === 1}
+							onClick={() => handleSelectMode("location")}
+						>
+							<Typography
+								startDecorator={<Place color="success" />}
+							>
+								Search by Location
+							</Typography>
+						</MenuItem>
+						<MenuItem
+							selected={searchTabIndex === 0}
+							onClick={() => handleSelectMode("species")}
+						>
+							<Typography
+								startDecorator={<EmojiNature color="success" />}
+							>
+								Search by Species
+							</Typography>
+						</MenuItem>
+					</Menu>
+				</Dropdown>
 			</Box>
 			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
 				<ColorSchemeToggle sx={{ alignSelf: "center" }} />
