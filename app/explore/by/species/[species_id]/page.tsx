@@ -3,10 +3,7 @@
 import SpeciesBtn from "@/app/components/explore/SpeciesBtn";
 import { Box, Typography } from "@mui/joy";
 import React, { useState, useEffect } from "react";
-import { Button, Stack } from "@mui/joy";
-
-import DescriptionIcon from "@mui/icons-material/Description";
-import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
+import { Stack } from "@mui/joy";
 import Filters from "@/app/components/explore/Filters";
 import Pagination from "@/app/components/explore/Pagination";
 
@@ -42,11 +39,6 @@ const PER_PAGE = 20;
 
 export default function SpeciesDetailsPage({ params }: PageProps) {
 	const { species_id } = React.use(params);
-
-	const [openSummaryModal, setOpenSummaryModal] = useState(false);
-
-	// TODO: Implement like in db
-	const [isLiked, setIsLiked] = useState(false);
 
 	const [page, setPage] = useState(1);
 	const [speciesDetails, setSpeciesDetails] = useState<SpeciesDetails | null>(
@@ -104,7 +96,7 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 					alignItems: "center",
 					justifyContent: "center",
 					bgcolor: "background.surface",
-					px: 2,
+					px: 4,
 				}}
 			>
 				<LinearProgress color="success" variant="soft" />
@@ -121,7 +113,7 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 					alignItems: "center",
 					justifyContent: "center",
 					bgcolor: "background.surface",
-					px: 2,
+					px: 4,
 				}}
 			>
 				<Typography color="danger">Error: {error}</Typography>
@@ -138,7 +130,7 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 					alignItems: "center",
 					justifyContent: "center",
 					bgcolor: "background.surface",
-					px: 2,
+					px: 4,
 				}}
 			>
 				<Typography>No data available.</Typography>

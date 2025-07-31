@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const url = `https://api.inaturalist.org/v1/observations?licensed=true&place_id=${placeId}&order=desc&order_by=created_at&per_page=20&page=${page}`;
+    const url = `https://api.inaturalist.org/v1/observations?verifiable=true&place_id=${placeId}&order=desc&order_by=observed_on&per_page=20&page=${page}`;
     const obsRes = await fetch(url);
     const obsData = await obsRes.json();
 
