@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   const placeId = req.nextUrl.searchParams.get('place_id');
   const pageParam = req.nextUrl.searchParams.get('page');
+  const order = req.nextUrl.searchParams.get('order') || 'desc';
   const page = parseInt(pageParam || '1', 10);
 
   if (!placeId) {
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const url = `https://api.inaturalist.org/v1/observations?verifiable=true&place_id=${placeId}&order=desc&order_by=observed_on&per_page=50&page=${page}`;
+    const url = `https://api.inaturalist.org/v1/observations?verifiable=true&place_id=${placeId}&order=${order}&order_by=observed_on&per_page=50&page=${page}`;
     const obsRes = await fetch(url);
     const obsData = await obsRes.json();
 
