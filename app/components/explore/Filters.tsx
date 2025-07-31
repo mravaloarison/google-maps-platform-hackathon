@@ -18,7 +18,12 @@ function valueText(value: number) {
 	return `$${value.toLocaleString("en-US")}`;
 }
 
-export default function Filters() {
+interface FiltersProps {
+	onSortChange: (order: "asc" | "desc") => void;
+	sortOrder: "asc" | "desc";
+}
+
+export default function Filters({ onSortChange, sortOrder }: FiltersProps) {
 	const [open, setOpen] = React.useState(false);
 	return (
 		<Stack
@@ -39,7 +44,11 @@ export default function Filters() {
 			>
 				Filters
 			</Button>
-			<SortSpeciesResult />
+			<SortSpeciesResult
+				onSortChange={onSortChange}
+				sortOrder={sortOrder}
+			/>
+
 			<Drawer open={open} onClose={() => setOpen(false)}>
 				<Stack useFlexGap spacing={3} sx={{ p: 2 }}>
 					<DialogTitle>Filters</DialogTitle>

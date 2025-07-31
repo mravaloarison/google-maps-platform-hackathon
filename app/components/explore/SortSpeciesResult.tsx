@@ -3,9 +3,21 @@ import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 
-export default function SortSpeciesResult() {
+interface Props {
+	onSortChange: (order: "asc" | "desc") => void;
+	sortOrder: "asc" | "desc";
+}
+
+export default function SortSpeciesResult({ onSortChange, sortOrder }: Props) {
+	const selectedValue = sortOrder === "asc" ? "earliest" : "latest";
+
 	return (
 		<Select
+			value={selectedValue}
+			onChange={(_, newValue) => {
+				if (newValue === "earliest") onSortChange("asc");
+				if (newValue === "latest") onSortChange("desc");
+			}}
 			placeholder="Order by"
 			indicator={<KeyboardArrowDown />}
 			sx={{
@@ -16,10 +28,9 @@ export default function SortSpeciesResult() {
 					},
 				},
 			}}
-			disabled
 		>
-			<Option value="dog">earliest</Option>
-			<Option value="cat">latest</Option>
+			<Option value="earliest">Earliest</Option>
+			<Option value="latest">Latest</Option>
 		</Select>
 	);
 }

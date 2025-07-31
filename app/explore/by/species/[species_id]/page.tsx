@@ -41,18 +41,24 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	const { species_id } = React.use(params);
 
 	const [page, setPage] = useState(1);
+
+	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 	const [speciesDetails, setSpeciesDetails] = useState<SpeciesDetails | null>(
 		null
 	);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const fetchSpeciesDetails = async (taxonId: string, pageNumber: number) => {
+	const fetchSpeciesDetails = async (
+		taxonId: string,
+		pageNumber: number,
+		order: "asc" | "desc"
+	) => {
 		setLoading(true);
 		setError(null);
 		try {
 			const res = await fetch(
-				`/api/i_naturalist/species_details?taxon_id=${taxonId}&page=${pageNumber}`
+				`/api/i_naturalist/species_details?taxon_id=${taxonId}&page=${pageNumber}&order=${order}`
 			);
 			if (!res.ok) {
 				throw new Error("Failed to fetch species details");
@@ -68,8 +74,8 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	};
 
 	useEffect(() => {
-		fetchSpeciesDetails(species_id, page);
-	}, [species_id, page]);
+		fetchSpeciesDetails(species_id, page, sortOrder);
+	}, [species_id, page, sortOrder]);
 
 	useEffect(() => {
 		if (speciesDetails && speciesDetails.observations.length > 0) {
@@ -179,7 +185,8 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 			</Stack>
 
 			<Stack spacing={2} sx={{ px: 4, py: 2, minHeight: 0 }}>
-				<Filters />
+				<Filters onSortChange={setSortOrder} sortOrder={sortOrder} />
+
 				{observations.length === 0 && (
 					<Typography>No observations found.</Typography>
 				)}
