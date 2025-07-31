@@ -29,30 +29,38 @@ export default function LocationPage({ params }: PageProps) {
 	const { location_id } = React.use(params);
 	const [observations, setObservations] = useState<Observation[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [totalResults, setTotalResults] = useState(0);
+	const totalPages = Math.ceil(totalResults / PER_PAGE);
 
 	const [error, setError] = useState<string | null>(null);
 
 	const [page, setPage] = useState(1);
 
-	useEffect(() => {
-		const fetchObservations = async () => {
-			setLoading(true);
-			try {
-				const res = await fetch(
-					`/api/i_naturalist/species_by_location?place_id=${location_id}`
-				);
-				const data = await res.json();
-				setObservations(data.observations || []);
-				setPage(data.page || 1);
-			} catch (err) {
-				console.error("Failed to load location observations:", err);
-			} finally {
-				setLoading(false);
+	const fetchObservations = async (placeId: string, pageNumber: number) => {
+		setLoading(true);
+		setError(null);
+		try {
+			const res = await fetch(
+				`/api/i_naturalist/species_by_location?place_id=${placeId}&page=${pageNumber}`
+			);
+			if (!res.ok) {
+				throw new Error("Failed to fetch observations");
 			}
-		};
+			const data = await res.json();
+			setObservations(data.observations || []);
+			setTotalResults(data.total_results || 0);
+			setPage(data.page || 1);
+		} catch (err) {
+			console.error("Failed to load observations:", err);
+			setError(err instanceof Error ? err.message : "Unknown error");
+		} finally {
+			setLoading(false);
+		}
+	};
 
-		fetchObservations();
-	}, [location_id]);
+	useEffect(() => {
+		fetchObservations(location_id, page);
+	}, [location_id, page]);
 
 	if (loading) {
 		return (
@@ -104,8 +112,6 @@ export default function LocationPage({ params }: PageProps) {
 			</Box>
 		);
 	}
-
-	const totalPages = Math.ceil(observations.length / PER_PAGE);
 
 	return (
 		<Box
