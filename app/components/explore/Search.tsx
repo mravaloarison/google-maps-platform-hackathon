@@ -41,7 +41,6 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		SpeciesResult[]
 	>([]);
 	const [suppressFetch, setSuppressFetch] = useState(false);
-	const [loading, setLoading] = useState(false);
 
 	const controllerRef = useRef<AbortController | null>(null);
 	const [navigating, setNavigating] = useState(false);
@@ -79,7 +78,6 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 			const controller = new AbortController();
 			controllerRef.current = controller;
 
-			setLoading(true);
 			fetch(
 				`/api/i_naturalist/species_autocomplete?query=${encodeURIComponent(
 					searchValue
@@ -99,8 +97,7 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 						console.error("Species fetch failed:", err);
 						setFilteredSpeciesResults([]);
 					}
-				})
-				.finally(() => setLoading(false));
+				});
 		}
 	}, [searchValue, tabIndex]);
 
@@ -110,10 +107,13 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	) => {
 		setNavigating(true);
 		setSearchValue(locationName);
-		setTimeout(() => setFilteredLocationResults([]), 0);
+		setSuppressFetch(true);
+		setFilteredLocationResults([]);
 
-		router.push(`/explore/by/locations/${locationId}`);
-		setNavigating(false);
+		setTimeout(() => {
+			router.push(`/explore/by/locations/${locationId}`);
+			setNavigating(false);
+		}, 1000);
 	};
 
 	const handleSpeciesAutocompleteSelect = (
@@ -124,10 +124,11 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		setNavigating(true);
 		setSearchValue(common_name ?? scientific_name);
 		setSuppressFetch(true);
-		setTimeout(() => setFilteredSpeciesResults([]), 0);
-
-		router.push(`/explore/by/species/${taxon_id}`);
-		setNavigating(false);
+		setFilteredSpeciesResults([]);
+		setTimeout(() => {
+			router.push(`/explore/by/species/${taxon_id}`);
+			setNavigating(false);
+		}, 1000);
 	};
 
 	return (

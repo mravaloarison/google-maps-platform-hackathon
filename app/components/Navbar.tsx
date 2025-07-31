@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Box, IconButton, CircularProgress } from "@mui/joy";
-import { ArrowBack, Home } from "@mui/icons-material";
+import { Box, IconButton, CircularProgress, Menu, MenuItem } from "@mui/joy";
+import { ArrowBack, Home, Settings } from "@mui/icons-material";
 // import ColorSchemeToggle from "./ColorSchemeToggle";
 import Search from "./explore/Search";
 import { useRouter, usePathname } from "next/navigation";
@@ -20,8 +20,27 @@ export default function HeaderSection() {
 	const pathname = usePathname();
 	const [navigating, setNavigating] = useState(false);
 
+	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
 	const isSpeciesId = pathname.includes("/explore/by/species/");
-	const searchTabIndex = isSpeciesId ? 0 : 1;
+	const [searchTabIndex, setSearchTabIndex] = useState(isSpeciesId ? 0 : 1);
+
+	const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleCloseMenu = () => {
+		setAnchorEl(null);
+	};
+
+	const handleSelectMode = (mode: "species" | "location") => {
+		handleCloseMenu();
+		if (mode === "species") {
+			setSearchTabIndex(0);
+		} else {
+			setSearchTabIndex(1);
+		}
+	};
 
 	return (
 		<Box
@@ -60,6 +79,27 @@ export default function HeaderSection() {
 					<Home />
 				</IconButton>
 				<Search tabIndex={searchTabIndex} />
+				<IconButton onClick={handleOpenMenu}>
+					<Settings />
+				</IconButton>
+				<Menu
+					anchorEl={anchorEl}
+					open={Boolean(anchorEl)}
+					onClose={handleCloseMenu}
+				>
+					<MenuItem
+						selected={searchTabIndex === 1}
+						onClick={() => handleSelectMode("location")}
+					>
+						Search by Location
+					</MenuItem>
+					<MenuItem
+						selected={searchTabIndex === 0}
+						onClick={() => handleSelectMode("species")}
+					>
+						Search by Species
+					</MenuItem>
+				</Menu>
 			</Box>
 			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
 				<ColorSchemeToggle sx={{ alignSelf: "center" }} />
