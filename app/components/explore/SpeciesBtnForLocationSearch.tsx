@@ -61,20 +61,18 @@ export default function SpeciesBtnForLocationSearch({
 		return url.replace("square", "medium").replace("small", "medium");
 	};
 
-	const key = id;
-
 	return (
 		<Card
 			id={id}
 			variant="outlined"
 			orientation="horizontal"
 			sx={{
-				bgcolor: selected ? "primary.softBg" : "neutral.softBg",
+				bgcolor: selected ? "success.softBg" : "neutral.softBg",
 				display: "flex",
 				flexDirection: { sm: "row", xs: "column" },
 				transform: selected ? "scale(1.03)" : "scale(1)",
 				transition: "transform 0.2s ease",
-				borderColor: selected ? "primary.outlinedBorder" : undefined,
+				borderColor: selected ? "success.outlinedBorder" : undefined,
 				"&:hover": {
 					boxShadow: "lg",
 					borderColor:
@@ -84,7 +82,9 @@ export default function SpeciesBtnForLocationSearch({
 			}}
 			onMouseEnter={() =>
 				window.dispatchEvent(
-					new CustomEvent("highlight-marker", { detail: key })
+					new CustomEvent("highlight-marker", {
+						detail: id?.split("-").slice(1).join("-"),
+					})
 				)
 			}
 			onMouseLeave={() =>

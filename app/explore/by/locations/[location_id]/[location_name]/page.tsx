@@ -59,7 +59,6 @@ export default function LocationPage({ params }: PageProps) {
 	const [pendingPerPage, setPendingPerPage] = useState(PER_PAGE);
 
 	const [highlightedKey, setHighlightedKey] = useState<string | null>(null);
-	const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
 	const fetchObservations = async (
 		placeId: string,
@@ -114,20 +113,23 @@ export default function LocationPage({ params }: PageProps) {
 	}, [observations]);
 
 	useEffect(() => {
-		const onHighlight = (e: Event) => {
-			const ce = e as CustomEvent<string | null>;
-			setHighlightedKey(ce.detail);
+		const handler = (e: Event) => {
+			const ce = e as CustomEvent<string>;
+			const el = document.getElementById(`card-${ce.detail}`);
+			if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
 		};
-		window.addEventListener("highlight-marker", onHighlight);
-		return () =>
-			window.removeEventListener("highlight-marker", onHighlight);
+		window.addEventListener("marker-clicked", handler);
+		return () => window.removeEventListener("marker-clicked", handler);
 	}, []);
+
+	const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
 	useEffect(() => {
 		const onMarkerClick = (e: Event) => {
 			const ce = e as CustomEvent<string>;
 			setSelectedKey(ce.detail);
-			document.getElementById(`${ce.detail}`)?.scrollIntoView({
+
+			document.getElementById(`obs-${ce.detail}`)?.scrollIntoView({
 				behavior: "smooth",
 				block: "center",
 			});
@@ -244,25 +246,17 @@ export default function LocationPage({ params }: PageProps) {
 					<LinearProgress color="success" variant="soft" />
 				) : (
 					<Stack spacing={2} sx={{ overflow: "auto" }}>
-						{observations.map((obs) => {
-							const key = `${Math.random()
-								.toString(36)
-								.substring(2, 15)}-${obs.observer}-${
-								obs.observed_on
-							}-${obs.taxon?.id}`;
-							return (
-								<Stack key={key}>
-									<SpeciesBtnForLocationSearch
-										obs={obs}
-										selected={
-											selectedKey === key ||
-											highlightedKey === key
-										}
-										id={key}
-									/>
-								</Stack>
-							);
-						})}
+						{observations.map((obs, i) => (
+							<SpeciesBtnForLocationSearch
+								key={`${obs.observer}-${obs.observed_on}-${i}`}
+								obs={obs}
+								selected={
+									selectedKey ===
+									`${obs.observer}-${obs.observed_on}-${i}`
+								}
+								id={`obs-${obs.observer}-${obs.observed_on}-${i}`}
+							/>
+						))}
 					</Stack>
 				)}
 			</Stack>

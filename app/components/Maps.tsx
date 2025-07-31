@@ -25,8 +25,8 @@ export default function GoogleMapsLayout() {
 				const parsed = JSON.parse(storedSpecies);
 				console.log("loadSpecies called, loaded count:", parsed.length);
 
-				const formattedSpecies = parsed.map((obs: any) => ({
-					key: `${obs.observer}-${obs.observed_on}`,
+				const formattedSpecies = parsed.map((obs: any, id: number) => ({
+					key: `${obs.observer}-${obs.observed_on}-${id}`,
 					lat: parseFloat(obs.location.split(",")[0]),
 					lng: parseFloat(obs.location.split(",")[1]),
 				}));

@@ -233,13 +233,13 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 				<Stack spacing={2} sx={{ overflow: "auto" }}>
 					{observations.map((obs, i) => (
 						<SpeciesBtn
-							key={`${obs.observer}-${i}`}
+							key={`${obs.observer}-${obs.observed_on}-${i}`}
 							obs={obs}
 							selected={
 								selectedKey ===
-								`${obs.observer}-${obs.observed_on}`
+								`${obs.observer}-${obs.observed_on}-${i}`
 							}
-							id={`obs-${obs.observer}-${obs.observed_on}`}
+							id={`obs-${obs.observer}-${obs.observed_on}-${i}`}
 						/>
 					))}
 				</Stack>

@@ -50,29 +50,31 @@ export default function SpeciesBtn({
 		return url.replace("square", "medium").replace("small", "medium");
 	};
 
-	const key = `${obs.observer}-${obs.observed_on}`;
-
 	return (
 		<Card
 			id={id}
 			variant="outlined"
 			orientation="horizontal"
 			sx={{
-				bgcolor: "neutral.softBg",
 				display: "flex",
 				flexDirection: "row",
 				transform: selected ? "scale(1.03)" : "scale(1)",
 				transition: "transform 0.2s ease",
+				borderColor: selected
+					? "success.outlinedBorder"
+					: "neutral.outlinedBorder",
+				bgcolor: selected ? "success.softBg" : "neutral.softBg",
 				"&:hover": {
 					boxShadow: "lg",
 					borderColor:
 						"var(--joy-palette-neutral-outlinedDisabledBorder)",
+					cursor: "pointer",
 				},
 			}}
 			onMouseEnter={() =>
 				window.dispatchEvent(
 					new CustomEvent("highlight-marker", {
-						detail: `${obs.observer}-${obs.observed_on}`,
+						detail: id?.split("-").slice(1).join("-"),
 					})
 				)
 			}

@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Inspiration
+Nature should be as easy to explore as city life. When you search on Google Maps for coffee shops or restaurants near you, results are instant. The idea was to re-create the same experience but for wildlife and biodiversity.
 
-## Getting Started
+Instead of making biodiversity data complicated and intimidating (as it often is in scientific apps), this project focuses on making it accessible and curiosity-driven for everyone.
 
-First, run the development server:
+## Why not just use iNaturalist/GBIF/IUCN directly?
+These platforms are amazing for research but are not built for casual exploration. This project is designed to make nature as approachable as opening Google Maps for any places we go to everyday.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Where are the data coming from
+It uses verified records from:
+- [iNaturalist](https://www.inaturalist.org/)
+- [GBIF](https://www.gbif.org/)
+- [IUCN Red List](https://www.iucnredlist.org/) 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+to display verified species sightings.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How It Uses Google Maps Platform
+- `Location-based search:` Reverse geocoding and Places API help users choose regions intuitively.
+- `Map-based exploration:` The app uses the Maps JavaScript API to visualize nearby species like you would see restaurants or cafes.
+- `Seamless navigation:` Users pan and zoom the map to see species clusters and sighting locations.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech Stack
+- Next.js 14 (React)
+- Google Maps Platform (Maps, Places, Geocoding APIs)
+- iNaturalist API
+- GBIF API
+- IUCN Red List API
+- Joy UI (MUI) for modern UI components
