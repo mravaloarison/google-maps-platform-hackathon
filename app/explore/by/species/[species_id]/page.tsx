@@ -89,13 +89,37 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 			);
 
 			window.dispatchEvent(new Event("species-updated"));
-
-			console.log(
-				"Species observations saved to localStorage:",
-				speciesDetails.observations
-			);
 		}
 	}, [speciesDetails]);
+
+	useEffect(() => {
+		const handler = (e: Event) => {
+			const ce = e as CustomEvent<string>;
+			const el = document.getElementById(`card-${ce.detail}`);
+			if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+		};
+		window.addEventListener("marker-clicked", handler);
+		return () => window.removeEventListener("marker-clicked", handler);
+	}, []);
+
+	const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+	useEffect(() => {
+		const onMarkerClick = (e: Event) => {
+			const ce = e as CustomEvent<string>;
+			setSelectedKey(ce.detail);
+
+			// Scroll card into view with matching id
+			document.getElementById(`obs-${ce.detail}`)?.scrollIntoView({
+				behavior: "smooth",
+				block: "center",
+			});
+		};
+
+		window.addEventListener("marker-clicked", onMarkerClick);
+		return () =>
+			window.removeEventListener("marker-clicked", onMarkerClick);
+	}, []);
 
 	if (loading) {
 		return (
@@ -207,9 +231,16 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 				)}
 
 				<Stack spacing={2} sx={{ overflow: "auto" }}>
-					{" "}
 					{observations.map((obs, i) => (
-						<SpeciesBtn key={`${obs.observer}-${i}`} obs={obs} />
+						<SpeciesBtn
+							key={`${obs.observer}-${i}`}
+							obs={obs}
+							selected={
+								selectedKey ===
+								`${obs.observer}-${obs.observed_on}`
+							}
+							id={`obs-${obs.observer}-${obs.observed_on}`}
+						/>
 					))}
 				</Stack>
 			</Stack>

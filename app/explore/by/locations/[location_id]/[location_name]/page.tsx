@@ -58,6 +58,9 @@ export default function LocationPage({ params }: PageProps) {
 	const [appliedPerPage, setAppliedPerPage] = useState(PER_PAGE);
 	const [pendingPerPage, setPendingPerPage] = useState(PER_PAGE);
 
+	const [highlightedKey, setHighlightedKey] = useState<string | null>(null);
+	const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
 	const fetchObservations = async (
 		placeId: string,
 		pageNumber: number,
@@ -101,6 +104,39 @@ export default function LocationPage({ params }: PageProps) {
 	useEffect(() => {
 		fetchObservations(location_id, page, sortOrder, appliedPerPage);
 	}, [location_id, page, sortOrder, appliedFilters, appliedPerPage]);
+
+	useEffect(() => {
+		if (observations && observations.length > 0) {
+			localStorage.setItem("species", JSON.stringify(observations));
+
+			window.dispatchEvent(new Event("species-updated"));
+		}
+	}, [observations]);
+
+	useEffect(() => {
+		const onHighlight = (e: Event) => {
+			const ce = e as CustomEvent<string | null>;
+			setHighlightedKey(ce.detail);
+		};
+		window.addEventListener("highlight-marker", onHighlight);
+		return () =>
+			window.removeEventListener("highlight-marker", onHighlight);
+	}, []);
+
+	useEffect(() => {
+		const onMarkerClick = (e: Event) => {
+			const ce = e as CustomEvent<string>;
+			setSelectedKey(ce.detail);
+			document.getElementById(`${ce.detail}`)?.scrollIntoView({
+				behavior: "smooth",
+				block: "center",
+			});
+		};
+
+		window.addEventListener("marker-clicked", onMarkerClick);
+		return () =>
+			window.removeEventListener("marker-clicked", onMarkerClick);
+	}, []);
 
 	if (loading) {
 		return (
@@ -208,11 +244,25 @@ export default function LocationPage({ params }: PageProps) {
 					<LinearProgress color="success" variant="soft" />
 				) : (
 					<Stack spacing={2} sx={{ overflow: "auto" }}>
-						{observations.map((obs, index) => (
-							<Stack key={index}>
-								<SpeciesBtnForLocationSearch obs={obs} />
-							</Stack>
-						))}
+						{observations.map((obs) => {
+							const key = `${Math.random()
+								.toString(36)
+								.substring(2, 15)}-${obs.observer}-${
+								obs.observed_on
+							}-${obs.taxon?.id}`;
+							return (
+								<Stack key={key}>
+									<SpeciesBtnForLocationSearch
+										obs={obs}
+										selected={
+											selectedKey === key ||
+											highlightedKey === key
+										}
+										id={key}
+									/>
+								</Stack>
+							);
+						})}
 					</Stack>
 				)}
 			</Stack>

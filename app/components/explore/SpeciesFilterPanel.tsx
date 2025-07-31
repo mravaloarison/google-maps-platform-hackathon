@@ -30,7 +30,7 @@ export default function SpeciesFiltersPanel({
 				slotProps={{
 					input: { min: 1, max: 200, step: 1 },
 				}}
-				sx={{ width: 120 }}
+				sx={{ width: "100%" }}
 			/>
 			{pendingPerPage === 200 && (
 				<Typography level="body-xs" color="warning">
