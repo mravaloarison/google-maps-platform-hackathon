@@ -15,7 +15,6 @@ export default function ColorSchemeToggle(props: IconButtonProps) {
 	return (
 		<IconButton
 			id="toggle-mode"
-			size="sm"
 			variant="outlined"
 			color="neutral"
 			aria-label="toggle light/dark mode"
@@ -23,6 +22,9 @@ export default function ColorSchemeToggle(props: IconButtonProps) {
 				setMode(mode === "light" ? "dark" : "light");
 			}}
 			{...props}
+			sx={{
+				display: { xs: "none", md: "inline-flex" },
+			}}
 		>
 			{mode === "light" ? (
 				<LightModeRoundedIcon />

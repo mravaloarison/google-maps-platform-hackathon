@@ -11,13 +11,7 @@ import {
 	MenuButton,
 	Dropdown,
 } from "@mui/joy";
-import {
-	ArrowBack,
-	EmojiNature,
-	Home,
-	Place,
-	Settings,
-} from "@mui/icons-material";
+import { EmojiNature, Home, Place, Settings } from "@mui/icons-material";
 // import ColorSchemeToggle from "./ColorSchemeToggle";
 import Search from "./explore/Search";
 import { useRouter, usePathname } from "next/navigation";
@@ -85,7 +79,7 @@ export default function HeaderSection() {
 					flexDirection: "row",
 					alignItems: "center",
 					gap: 1.5,
-					width: { xs: "auto", sm: "412px" },
+					width: { xs: "auto", md: "412px" },
 				}}
 			>
 				<IconButton
@@ -107,10 +101,7 @@ export default function HeaderSection() {
 					>
 						<Settings />
 					</MenuButton>
-					<Menu
-						placement="bottom-start"
-						sx={{ zIndex: 10000 }}
-					>
+					<Menu placement="bottom-start" sx={{ zIndex: 10000 }}>
 						<MenuItem
 							selected={searchTabIndex === 1}
 							onClick={() => handleSelectMode("location")}
@@ -134,7 +125,9 @@ export default function HeaderSection() {
 					</Menu>
 				</Dropdown>
 			</Box>
-			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+			<Box
+				sx={{ display: "flex", flexDirection: "row", gap: 3, pl: 1.5 }}
+			>
 				<ColorSchemeToggle sx={{ alignSelf: "center" }} />
 			</Box>
 

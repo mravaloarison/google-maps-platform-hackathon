@@ -86,7 +86,7 @@ export default function HeaderSectionSpeciesResult({
 						variant="soft"
 						color="neutral"
 						onClick={() => setOpenDrawer(true)}
-						startDecorator={<DescriptionIcon />}
+						startDecorator={<DescriptionIcon color="success" />}
 						sx={{
 							width: "100%",
 						}}
@@ -108,7 +108,7 @@ export default function HeaderSectionSpeciesResult({
 					</Button>
 				</Stack>
 				<Typography level="body-sm" color="neutral" sx={{ mt: 2 }}>
-					{total_results} results found
+					Found <strong>{total_results}</strong> species
 				</Typography>
 			</Stack>
 

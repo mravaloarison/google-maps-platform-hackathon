@@ -10,7 +10,7 @@ import SpeciesBtnForLocationSearch from "@/app/components/explore/SpeciesBtnForL
 import HeaderSectionLocationSearch from "@/app/components/explore/HeadeerSectionLocationSearch";
 
 interface PageProps {
-	params: Promise<{ location_id: string }>;
+	params: Promise<{ location_id: string; location_name: string }>;
 }
 
 interface Observation {
@@ -29,7 +29,13 @@ interface Observation {
 const PER_PAGE = 50;
 
 export default function LocationPage({ params }: PageProps) {
-	const { location_id } = React.use(params);
+	const { location_id, location_name } = React.use(params);
+
+	function formatLocationName(slug: string) {
+		const withSpaces = decodeURIComponent(slug).replace(/[-_]/g, " ");
+		return withSpaces.replace(/\b\w/g, (char) => char.toUpperCase());
+	}
+
 	const [observations, setObservations] = useState<Observation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [totalResults, setTotalResults] = useState(0);
@@ -136,19 +142,21 @@ export default function LocationPage({ params }: PageProps) {
 				}}
 				spacing={2}
 			>
-				<HeaderSectionLocationSearch />
+				<HeaderSectionLocationSearch
+					placeName={formatLocationName(location_name)}
+				/>
 				<Button
-					variant="outlined"
-					color="success"
+					variant="soft"
+					color="neutral"
 					sx={{ width: "fit-content" }}
-					startDecorator={<DescriptionIcon />}
+					startDecorator={<DescriptionIcon color="success" />}
 				>
 					Read more about this location
 				</Button>
 				<Typography level="body-sm" color="neutral">
 					Found{" "}
 					<strong>{totalResults.toLocaleString("en-US")}</strong>{" "}
-					species in this location
+					species
 				</Typography>
 			</Stack>
 			<Stack spacing={2} sx={{ px: 4, py: 2, minHeight: 0 }}>

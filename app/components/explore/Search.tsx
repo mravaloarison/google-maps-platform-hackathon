@@ -111,7 +111,11 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		setFilteredLocationResults([]);
 
 		setTimeout(() => {
-			router.push(`/explore/by/locations/${locationId}`);
+			router.push(
+				`/explore/by/locations/${locationId}/${encodeURIComponent(
+					locationName
+				)}`
+			);
 			setNavigating(false);
 		}, 1000);
 	};
@@ -172,13 +176,14 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 			{navigating && (
 				<div
 					style={{
-						position: "absolute",
-						inset: 0,
+						position: "fixed",
+						top: 0,
+						left: 0,
 						background: "rgba(255,255,255,0.6)",
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						zIndex: 20,
+						zIndex: 9999,
 						width: "100vw",
 						height: "100vh",
 					}}
