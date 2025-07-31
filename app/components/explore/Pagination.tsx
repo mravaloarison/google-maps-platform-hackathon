@@ -37,7 +37,8 @@ export default function Pagination({
 					<ArrowBackIosRoundedIcon />
 				</IconButton>
 				<Typography level="body-sm" sx={{ mx: "auto" }}>
-					Observations {currentPage} of {totalPages}
+					Page {currentPage.toLocaleString("en-US")} of{" "}
+					{totalPages.toLocaleString("en-US")}
 				</Typography>
 				<IconButton
 					aria-label="next page"

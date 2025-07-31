@@ -138,7 +138,7 @@ export default function HeaderSectionSpeciesResult({
 						}}
 					>
 						<Typography level="h4">
-							{commonName ?? scientificName} – Details
+							{commonName ?? scientificName}
 						</Typography>
 						<IconButton onClick={toggleDrawer(false)}>
 							<CloseIcon />
@@ -157,8 +157,9 @@ export default function HeaderSectionSpeciesResult({
 								style={{
 									border: "none",
 									width: "100%",
-									height: "100%",
+									height: "calc(100% + 5rem)",
 									backgroundColor: "transparent",
+									marginTop: "-5rem",
 								}}
 							/>
 						</Box>

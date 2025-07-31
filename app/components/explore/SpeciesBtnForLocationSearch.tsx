@@ -86,7 +86,7 @@ export default function SpeciesBtnForLocationSearch({
 					<AspectRatio
 						ratio="1"
 						sx={{
-							minWidth: { sm: 120, md: 180 },
+							minWidth: { sm: 120, md: 160 },
 							width: "100%",
 							"--AspectRatio-maxHeight": {
 								xs: "160px",

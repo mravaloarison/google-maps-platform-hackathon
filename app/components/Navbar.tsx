@@ -1,13 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Box, IconButton } from "@mui/joy";
-import Typography from "@mui/joy/Typography";
-import Avatar from "@mui/joy/Avatar";
-import { ArrowBack } from "@mui/icons-material";
+import { Box, IconButton, CircularProgress } from "@mui/joy";
+import { ArrowBack, Home } from "@mui/icons-material";
 // import ColorSchemeToggle from "./ColorSchemeToggle";
 import Search from "./explore/Search";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
 
 import dynamic from "next/dynamic";
 
@@ -18,6 +17,11 @@ const ColorSchemeToggle = dynamic(
 
 export default function HeaderSection() {
 	const router = useRouter();
+	const pathname = usePathname();
+	const [navigating, setNavigating] = useState(false);
+
+	const isSpeciesId = pathname.includes("/explore/by/species/");
+	const searchTabIndex = isSpeciesId ? 0 : 1;
 
 	return (
 		<Box
@@ -48,34 +52,36 @@ export default function HeaderSection() {
 			>
 				<IconButton
 					variant="soft"
-					onClick={() => router.push("/explore")}
-				>
-					<ArrowBack />
-				</IconButton>
-				<Search tabIndex={0} />
-			</Box>
-			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
-				<Box
-					sx={{
-						gap: 1,
-						alignItems: "center",
-						display: { xs: "none", sm: "flex" },
+					onClick={() => {
+						setNavigating(true);
+						router.push("/explore");
 					}}
 				>
-					<Avatar
-						variant="outlined"
-						size="sm"
-						src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
-					/>
-					<Box sx={{ minWidth: 0, flex: 1 }}>
-						<Typography level="title-sm">Siriwat K.</Typography>
-						<Typography level="body-xs">
-							siriwatk@test.com
-						</Typography>
-					</Box>
-				</Box>
+					<Home />
+				</IconButton>
+				<Search tabIndex={searchTabIndex} />
+			</Box>
+			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
 				<ColorSchemeToggle sx={{ alignSelf: "center" }} />
 			</Box>
+
+			{navigating && (
+				<div
+					style={{
+						position: "absolute",
+						inset: 0,
+						background: "rgba(255,255,255,0.6)",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						zIndex: 20,
+						width: "100vw",
+						height: "100vh",
+					}}
+				>
+					<CircularProgress size="lg" />
+				</div>
+			)}
 		</Box>
 	);
 }

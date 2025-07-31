@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const taxonData = await fetch(`https://api.inaturalist.org/v1/taxa/${taxonId}`).then(res => res.json());
     const taxon = taxonData?.results?.[0];
 
-    const obsRes = await fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxonId}&verifiable=true&per_page=20&page=${page}&order=desc&order_by=observed_on`);
+    const obsRes = await fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxonId}&verifiable=true&per_page=50&page=${page}&order=desc&order_by=observed_on`);
     const obsData = await obsRes.json();
 
     const observations = obsData.results.map((obs: any) => ({

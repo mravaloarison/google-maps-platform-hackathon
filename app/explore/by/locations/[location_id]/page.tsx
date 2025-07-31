@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Stack, Typography, LinearProgress } from "@mui/joy";
+import { Box, Stack, Typography, LinearProgress, Button } from "@mui/joy";
 import Filters from "@/app/components/explore/Filters";
 import Pagination from "@/app/components/explore/Pagination";
+import DescriptionIcon from "@mui/icons-material/Description";
+
 import SpeciesBtnForLocationSearch from "@/app/components/explore/SpeciesBtnForLocationSearch";
+import HeaderSectionLocationSearch from "@/app/components/explore/HeadeerSectionLocationSearch";
 
 interface PageProps {
 	params: Promise<{ location_id: string }>;
@@ -23,7 +26,7 @@ interface Observation {
 	} | null;
 }
 
-const PER_PAGE = 20;
+const PER_PAGE = 50;
 
 export default function LocationPage({ params }: PageProps) {
 	const { location_id } = React.use(params);
@@ -127,16 +130,31 @@ export default function LocationPage({ params }: PageProps) {
 				sx={{
 					backgroundColor: "background.surface",
 					px: 4,
+					py: 2,
 					borderBottom: "1px solid",
 					borderColor: "divider",
 				}}
+				spacing={2}
 			>
-				Hello
+				<HeaderSectionLocationSearch />
+				<Button
+					variant="outlined"
+					color="success"
+					sx={{ width: "fit-content" }}
+					startDecorator={<DescriptionIcon />}
+				>
+					Read more about this location
+				</Button>
+				<Typography level="body-sm" color="neutral">
+					Found{" "}
+					<strong>{totalResults.toLocaleString("en-US")}</strong>{" "}
+					species in this location
+				</Typography>
 			</Stack>
 			<Stack spacing={2} sx={{ px: 4, py: 2, minHeight: 0 }}>
 				<Filters />
 				{loading ? (
-					<div>Loading observations…</div>
+					<LinearProgress color="success" variant="soft" />
 				) : (
 					<Stack spacing={2} sx={{ overflow: "auto" }}>
 						{observations.map((obs, index) => (

@@ -35,7 +35,7 @@ interface SpeciesDetails {
 interface PageProps {
 	params: Promise<{ species_id: string }>;
 }
-const PER_PAGE = 20;
+const PER_PAGE = 50;
 
 export default function SpeciesDetailsPage({ params }: PageProps) {
 	const { species_id } = React.use(params);
