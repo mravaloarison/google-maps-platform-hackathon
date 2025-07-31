@@ -38,12 +38,30 @@ export default function TaxonTitle({ taxon }: { taxon: Taxon | null }) {
 					},
 				}}
 			>
-				<Typography level="title-lg">
+				<Typography
+					level="title-lg"
+					sx={{
+						overflow: "hidden",
+						textOverflow: "ellipsis",
+						display: "-webkit-box",
+						WebkitLineClamp: 1,
+						WebkitBoxOrient: "vertical",
+					}}
+				>
 					{taxon.common_name || taxon.scientific_name}
 				</Typography>
 
 				{taxon.scientific_name && (
-					<Typography level="body-sm">
+					<Typography
+						level="body-sm"
+						sx={{
+							overflow: "hidden",
+							textOverflow: "ellipsis",
+							display: "-webkit-box",
+							WebkitLineClamp: 2,
+							WebkitBoxOrient: "vertical",
+						}}
+					>
 						&#40;{taxon.scientific_name}&#41;
 					</Typography>
 				)}

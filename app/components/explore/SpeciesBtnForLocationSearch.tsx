@@ -121,7 +121,17 @@ export default function SpeciesBtnForLocationSearch({
 										<Visibility color="success" />
 									}
 								>
-									By <strong> {obs.observer}</strong>
+									<strong
+										style={{
+											overflow: "hidden",
+											textOverflow: "ellipsis",
+											display: "-webkit-box",
+											WebkitLineClamp: 1,
+											WebkitBoxOrient: "vertical",
+										}}
+									>
+										{obs.observer}
+									</strong>
 								</Typography>
 							)}
 
@@ -140,7 +150,17 @@ export default function SpeciesBtnForLocationSearch({
 								startDecorator={<LocationOn color="success" />}
 								level="body-xs"
 							>
-								{obs.place_guess || "unknown location"}
+								<span
+									style={{
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										display: "-webkit-box",
+										WebkitLineClamp: 1,
+										WebkitBoxOrient: "vertical",
+									}}
+								>
+									{obs.place_guess || "unknown location"}
+								</span>
 							</Typography>
 						</Stack>
 					</Stack>
