@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Stack, Typography, LinearProgress, Button } from "@mui/joy";
+import { Box, Stack, Typography, LinearProgress } from "@mui/joy";
 import Filters from "@/app/components/explore/Filters";
 import Pagination from "@/app/components/explore/Pagination";
-import DescriptionIcon from "@mui/icons-material/Description";
 
 import SpeciesBtnForLocationSearch from "@/app/components/explore/SpeciesBtnForLocationSearch";
 import HeaderSectionLocationSearch from "@/app/components/explore/HeadeerSectionLocationSearch";
 import LocationFiltersPanel from "@/app/components/explore/LocationFiltersPanel";
+import GeneratePlacesDescription from "@/app/components/explore/GeneratePlacesDescription";
 
 interface PageProps {
 	params: Promise<{ location_id: string; location_name: string }>;
@@ -214,14 +214,9 @@ export default function LocationPage({ params }: PageProps) {
 				<HeaderSectionLocationSearch
 					placeName={formatLocationName(location_name)}
 				/>
-				<Button
-					variant="soft"
-					color="neutral"
-					sx={{ width: "fit-content" }}
-					startDecorator={<DescriptionIcon color="success" />}
-				>
-					Read more about this location
-				</Button>
+				<GeneratePlacesDescription
+					placeName={formatLocationName(location_name)}
+				/>
 				<Typography level="body-sm" color="neutral">
 					Found{" "}
 					<strong>{totalResults.toLocaleString("en-US")}</strong>{" "}
