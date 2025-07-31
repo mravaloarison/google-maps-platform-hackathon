@@ -5,32 +5,23 @@ import Button from "@mui/joy/Button";
 import Drawer from "@mui/joy/Drawer";
 import ModalClose from "@mui/joy/ModalClose";
 import Stack from "@mui/joy/Stack";
-import SortSpeciesResult from "./SortSpeciesResult";
 import { DialogContent, DialogTitle, Box } from "@mui/joy";
 import Rule from "@mui/icons-material/Rule";
-import LocationFiltersPanel from "./LocationFiltersPanel";
+import SortSpeciesResult from "./SortSpeciesResult";
 
-interface LocationFilters {
-	endemic: boolean;
-	threatened: boolean;
-	native: boolean;
-}
-
-interface FiltersProps {
+interface GenericFiltersProps {
 	onSortChange: (order: "asc" | "desc") => void;
 	sortOrder: "asc" | "desc";
-	filters: LocationFilters;
-	setFilters: React.Dispatch<React.SetStateAction<LocationFilters>>;
-	onApply: () => void; // new prop
+	children?: React.ReactNode;
+	onApply?: () => void;
 }
 
 export default function Filters({
 	onSortChange,
 	sortOrder,
-	filters,
-	setFilters,
+	children,
 	onApply,
-}: FiltersProps) {
+}: GenericFiltersProps) {
 	const [open, setOpen] = React.useState(false);
 
 	return (
@@ -52,6 +43,7 @@ export default function Filters({
 			>
 				Filters
 			</Button>
+
 			<SortSpeciesResult
 				onSortChange={onSortChange}
 				sortOrder={sortOrder}
@@ -67,12 +59,7 @@ export default function Filters({
 				<ModalClose />
 				<DialogTitle>Filters</DialogTitle>
 				<DialogContent>
-					<Box sx={{ p: 2 }}>
-						<LocationFiltersPanel
-							filters={filters}
-							setFilters={setFilters}
-						/>
-					</Box>
+					<Box sx={{ p: 2 }}>{children}</Box>
 				</DialogContent>
 				<Box
 					sx={{
@@ -89,7 +76,7 @@ export default function Filters({
 						variant="plain"
 						startDecorator={<Rule />}
 						onClick={() => {
-							onApply();
+							if (onApply) onApply();
 							setOpen(false);
 						}}
 					>

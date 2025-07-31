@@ -8,13 +8,14 @@ export async function GET(req: NextRequest) {
   const threatened = req.nextUrl.searchParams.get('threatened') === 'true';
   const native = req.nextUrl.searchParams.get('native') === 'true';
   const page = parseInt(pageParam || '1', 10);
+  const perPage = req.nextUrl.searchParams.get('per_page') || '50';
 
   if (!placeId) {
     return NextResponse.json({ error: 'place_id is required' }, { status: 400 });
   }
 
   try {
-    const url = `https://api.inaturalist.org/v1/observations?verifiable=true&place_id=${placeId}&order=${order}&order_by=observed_on&per_page=50&page=${page}&endemic=${endemic}&threatened=${threatened}&native=${native}`;
+    const url = `https://api.inaturalist.org/v1/observations?verifiable=true&place_id=${placeId}&order=${order}&order_by=observed_on&per_page=${perPage}&page=${page}&endemic=${endemic}&threatened=${threatened}&native=${native}`;
     const obsRes = await fetch(url);
     const obsData = await obsRes.json();
 

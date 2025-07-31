@@ -8,6 +8,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 
 import SpeciesBtnForLocationSearch from "@/app/components/explore/SpeciesBtnForLocationSearch";
 import HeaderSectionLocationSearch from "@/app/components/explore/HeadeerSectionLocationSearch";
+import LocationFiltersPanel from "@/app/components/explore/LocationFiltersPanel";
 
 interface PageProps {
 	params: Promise<{ location_id: string; location_name: string }>;
@@ -54,11 +55,14 @@ export default function LocationPage({ params }: PageProps) {
 	const [error, setError] = useState<string | null>(null);
 
 	const [page, setPage] = useState(1);
+	const [appliedPerPage, setAppliedPerPage] = useState(PER_PAGE);
+	const [pendingPerPage, setPendingPerPage] = useState(PER_PAGE);
 
 	const fetchObservations = async (
 		placeId: string,
 		pageNumber: number,
-		order: "asc" | "desc"
+		order: "asc" | "desc",
+		perPage: number
 	) => {
 		setLoading(true);
 		setError(null);
@@ -72,6 +76,7 @@ export default function LocationPage({ params }: PageProps) {
 			endemic: String(endemic),
 			threatened: String(threatened),
 			native: String(native),
+			per_page: String(perPage),
 		});
 
 		try {
@@ -94,8 +99,8 @@ export default function LocationPage({ params }: PageProps) {
 	};
 
 	useEffect(() => {
-		fetchObservations(location_id, page, sortOrder);
-	}, [location_id, page, sortOrder, appliedFilters]);
+		fetchObservations(location_id, page, sortOrder, appliedPerPage);
+	}, [location_id, page, sortOrder, appliedFilters, appliedPerPage]);
 
 	if (loading) {
 		return (
@@ -189,10 +194,16 @@ export default function LocationPage({ params }: PageProps) {
 				<Filters
 					onSortChange={setSortOrder}
 					sortOrder={sortOrder}
-					filters={pendingFilters}
-					setFilters={setPendingFilters}
 					onApply={() => setAppliedFilters(pendingFilters)}
-				/>
+				>
+					<LocationFiltersPanel
+						filters={pendingFilters}
+						setFilters={setPendingFilters}
+						pendingPerPage={pendingPerPage}
+						setPendingPerPage={setPendingPerPage}
+					/>
+				</Filters>
+
 				{loading ? (
 					<LinearProgress color="success" variant="soft" />
 				) : (

@@ -9,6 +9,7 @@ import Pagination from "@/app/components/explore/Pagination";
 
 import LinearProgress from "@mui/joy/LinearProgress";
 import HeaderSectionSpeciesResult from "@/app/components/explore/HeaderSectionSpeciesResult";
+import SpeciesFiltersPanel from "@/app/components/explore/SpeciesFilterPanel";
 
 interface Observation {
 	observer: string;
@@ -41,6 +42,8 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	const { species_id } = React.use(params);
 
 	const [page, setPage] = useState(1);
+	const [appliedPerPage, setAppliedPerPage] = useState(PER_PAGE);
+	const [pendingPerPage, setPendingPerPage] = useState(PER_PAGE);
 
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 	const [speciesDetails, setSpeciesDetails] = useState<SpeciesDetails | null>(
@@ -52,13 +55,14 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	const fetchSpeciesDetails = async (
 		taxonId: string,
 		pageNumber: number,
-		order: "asc" | "desc"
+		order: "asc" | "desc",
+		perPage: number
 	) => {
 		setLoading(true);
 		setError(null);
 		try {
 			const res = await fetch(
-				`/api/i_naturalist/species_details?taxon_id=${taxonId}&page=${pageNumber}&order=${order}`
+				`/api/i_naturalist/species_details?taxon_id=${taxonId}&page=${pageNumber}&order=${order}&per_page=${perPage}`
 			);
 			if (!res.ok) {
 				throw new Error("Failed to fetch species details");
@@ -74,8 +78,8 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 	};
 
 	useEffect(() => {
-		fetchSpeciesDetails(species_id, page, sortOrder);
-	}, [species_id, page, sortOrder]);
+		fetchSpeciesDetails(species_id, page, sortOrder, appliedPerPage);
+	}, [species_id, page, sortOrder, appliedPerPage]);
 
 	useEffect(() => {
 		if (speciesDetails && speciesDetails.observations.length > 0) {
@@ -155,7 +159,7 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 		total_results,
 	} = speciesDetails;
 
-	const totalPages = Math.ceil(total_results / PER_PAGE);
+	const totalPages = Math.ceil(total_results / appliedPerPage);
 
 	return (
 		<Box
@@ -185,7 +189,18 @@ export default function SpeciesDetailsPage({ params }: PageProps) {
 			</Stack>
 
 			<Stack spacing={2} sx={{ px: 4, py: 2, minHeight: 0 }}>
-				<Filters onSortChange={setSortOrder} sortOrder={sortOrder} />
+				<Filters
+					onSortChange={setSortOrder}
+					sortOrder={sortOrder}
+					onApply={() => {
+						setAppliedPerPage(pendingPerPage);
+					}}
+				>
+					<SpeciesFiltersPanel
+						pendingPerPage={pendingPerPage}
+						setPendingPerPage={setPendingPerPage}
+					/>
+				</Filters>
 
 				{observations.length === 0 && (
 					<Typography>No observations found.</Typography>

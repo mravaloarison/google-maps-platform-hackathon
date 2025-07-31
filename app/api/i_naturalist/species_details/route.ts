@@ -5,6 +5,7 @@ export async function GET(req: NextRequest) {
   const pageParam = req.nextUrl.searchParams.get('page');
   const order = req.nextUrl.searchParams.get('order') || 'desc';
   const page = parseInt(pageParam || '1', 10);
+  const perPage = req.nextUrl.searchParams.get('per_page') || '50';
 
   if (!taxonId) {
     return NextResponse.json({ error: 'taxon_id is required' }, { status: 400 });
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     const taxonData = await fetch(`https://api.inaturalist.org/v1/taxa/${taxonId}`).then(res => res.json());
     const taxon = taxonData?.results?.[0];
 
-    const obsRes = await fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxonId}&verifiable=true&per_page=50&page=${page}&order=${order}&order_by=observed_on`);
+    const obsRes = await fetch(`https://api.inaturalist.org/v1/observations?taxon_id=${taxonId}&verifiable=true&page=${page}&order=${order}&order_by=observed_on&per_page=${perPage}`);
     const obsData = await obsRes.json();
 
     const observations = obsData.results.map((obs: any) => ({
