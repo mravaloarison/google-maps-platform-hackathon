@@ -5,16 +5,14 @@ import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemButton from "@mui/joy/ListItemButton";
 
-interface Country {
-	code: string;
-	description: {
-		en: string;
-	};
+interface Location {
+	id: number;
+	display_name: string;
 }
 
 interface Props {
-	locations: Country[];
-	onSelect: (name: string, code: string) => void;
+	locations: Location[];
+	onSelect: (name: string, id: string) => void;
 }
 
 export default function LocationAutocompleteList({
@@ -39,14 +37,14 @@ export default function LocationAutocompleteList({
 				overflowY: "auto",
 			}}
 		>
-			{locations.map((country, index) => (
+			{locations.map((place, index) => (
 				<ListItem key={index}>
 					<ListItemButton
 						onClick={() =>
-							onSelect(country.description.en, country.code)
+							onSelect(place.display_name, String(place.id))
 						}
 					>
-						{country.description.en}
+						{place.display_name}
 					</ListItemButton>
 				</ListItem>
 			))}

@@ -11,15 +11,15 @@ import { Close } from "@mui/icons-material";
 import LocationAutocompleteList from "./LocationAutocompleteList";
 import SpeciesAutocompleteList from "./SpeciesAutocompleteList";
 
+import CircularProgress from "@mui/joy/CircularProgress";
+
 interface SearchProps {
 	tabIndex?: number;
 }
 
-interface Country {
-	code: string;
-	description: {
-		en: string;
-	};
+interface Location {
+	id: number;
+	display_name: string;
 }
 
 interface SpeciesResult {
@@ -35,25 +35,16 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 
 	const [searchValue, setSearchValue] = useState("");
 	const [filteredLocationResults, setFilteredLocationResults] = useState<
-		Country[]
+		Location[]
 	>([]);
 	const [filteredSpeciesResults, setFilteredSpeciesResults] = useState<
 		SpeciesResult[]
 	>([]);
-	const [countries, setCountries] = useState<Country[]>([]);
 	const [suppressFetch, setSuppressFetch] = useState(false);
 	const [loading, setLoading] = useState(false);
 
 	const controllerRef = useRef<AbortController | null>(null);
-
-	useEffect(() => {
-		const fetchCountries = async () => {
-			const res = await fetch("/api/countries");
-			const data: Country[] = await res.json();
-			setCountries(data);
-		};
-		fetchCountries();
-	}, []);
+	const [navigating, setNavigating] = useState(false);
 
 	useEffect(() => {
 		if (suppressFetch) {
@@ -68,12 +59,19 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		}
 
 		if (tabIndex === 1) {
-			const results = countries.filter((c) =>
-				c.description.en
-					.toLowerCase()
-					.includes(searchValue.toLowerCase())
-			);
-			setFilteredLocationResults(results);
+			fetch(
+				`/api/i_naturalist/places_autocomplete?q=${encodeURIComponent(
+					searchValue
+				)}`
+			)
+				.then((res) => res.json())
+				.then((data: Location[]) => {
+					setFilteredLocationResults(data);
+				})
+				.catch((err) => {
+					console.error("Locations fetch failed:", err);
+					setFilteredLocationResults([]);
+				});
 		} else if (tabIndex === 0) {
 			if (controllerRef.current) {
 				controllerRef.current.abort();
@@ -96,7 +94,6 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 						setFilteredSpeciesResults([]);
 					}
 				})
-
 				.catch((err) => {
 					if (err.name !== "AbortError") {
 						console.error("Species fetch failed:", err);
@@ -105,16 +102,18 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 				})
 				.finally(() => setLoading(false));
 		}
-	}, [searchValue, tabIndex, countries]);
+	}, [searchValue, tabIndex]);
 
 	const handleLocationAutocompleteSelect = (
-		countryName: string,
-		countryCode: string
+		locationName: string,
+		locationId: string
 	) => {
-		setSearchValue(countryName);
+		setNavigating(true);
+		setSearchValue(locationName);
 		setTimeout(() => setFilteredLocationResults([]), 0);
 
-		router.push(`/explore/by/locations/${countryCode}`);
+		router.push(`/explore/by/locations/${locationId}`);
+		setNavigating(false);
 	};
 
 	const handleSpeciesAutocompleteSelect = (
@@ -122,11 +121,13 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		scientific_name: string,
 		taxon_id: number
 	) => {
+		setNavigating(true);
 		setSearchValue(common_name ?? scientific_name);
 		setSuppressFetch(true);
 		setTimeout(() => setFilteredSpeciesResults([]), 0);
 
 		router.push(`/explore/by/species/${taxon_id}`);
+		setNavigating(false);
 	};
 
 	return (
@@ -167,6 +168,23 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 					onSelect={handleSpeciesAutocompleteSelect}
 				/>
 			</FormControl>
+			{navigating && (
+				<div
+					style={{
+						position: "absolute",
+						inset: 0,
+						background: "rgba(255,255,255,0.6)",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						zIndex: 20,
+						width: "100vw",
+						height: "100vh",
+					}}
+				>
+					<CircularProgress size="lg" />
+				</div>
+			)}
 		</Stack>
 	);
 }

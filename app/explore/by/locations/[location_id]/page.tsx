@@ -1,16 +1,36 @@
 "use client";
 
-import Search from "@/app/components/explore/Search";
 import React from "react";
 
+import { Box, Stack } from "@mui/joy";
+
 interface PageProps {
-	params: Promise<{ country_code: string }>;
+	params: Promise<{ location_id: string }>;
 }
 
 export default function LocationPage({ params }: PageProps) {
-	const { country_code } = React.use(params);
+	const { location_id } = React.use(params);
 
 	return (
-		<div>{country_code}</div>
+		<Box
+			sx={{
+				height: "calc(100vh - 70px)",
+				display: "grid",
+				gridTemplateRows: "auto 1fr auto",
+				width: "auto",
+				gridTemplateColumns: "100%",
+			}}
+		>
+			<Stack
+				sx={{
+					backgroundColor: "background.surface",
+					px: 4,
+					borderBottom: "1px solid",
+					borderColor: "divider",
+				}}
+			>
+				The country code is: {location_id}
+			</Stack>
+		</Box>
 	);
 }
