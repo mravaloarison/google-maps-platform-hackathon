@@ -4,6 +4,9 @@ export async function GET(req: NextRequest) {
   const placeId = req.nextUrl.searchParams.get('place_id');
   const pageParam = req.nextUrl.searchParams.get('page');
   const order = req.nextUrl.searchParams.get('order') || 'desc';
+  const endemic  = req.nextUrl.searchParams.get('endemic') === 'true';
+  const threatened = req.nextUrl.searchParams.get('threatened') === 'true';
+  const native = req.nextUrl.searchParams.get('native') === 'true';
   const page = parseInt(pageParam || '1', 10);
 
   if (!placeId) {
@@ -11,7 +14,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const url = `https://api.inaturalist.org/v1/observations?verifiable=true&place_id=${placeId}&order=${order}&order_by=observed_on&per_page=50&page=${page}`;
+    const url = `https://api.inaturalist.org/v1/observations?verifiable=true&place_id=${placeId}&order=${order}&order_by=observed_on&per_page=50&page=${page}&endemic=${endemic}&threatened=${threatened}&native=${native}`;
     const obsRes = await fetch(url);
     const obsData = await obsRes.json();
 

@@ -1,30 +1,38 @@
 "use client";
 
 import * as React from "react";
-import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import Drawer from "@mui/joy/Drawer";
-import DialogTitle from "@mui/joy/DialogTitle";
-import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
-import Input from "@mui/joy/Input";
 import ModalClose from "@mui/joy/ModalClose";
 import Stack from "@mui/joy/Stack";
-import Slider, { sliderClasses } from "@mui/joy/Slider";
-import FilterAltOutlined from "@mui/icons-material/FilterAltOutlined";
 import SortSpeciesResult from "./SortSpeciesResult";
+import { DialogContent, DialogTitle, Box } from "@mui/joy";
+import Rule from "@mui/icons-material/Rule";
+import LocationFiltersPanel from "./LocationFiltersPanel";
 
-function valueText(value: number) {
-	return `$${value.toLocaleString("en-US")}`;
+interface LocationFilters {
+	endemic: boolean;
+	threatened: boolean;
+	native: boolean;
 }
 
 interface FiltersProps {
 	onSortChange: (order: "asc" | "desc") => void;
 	sortOrder: "asc" | "desc";
+	filters: LocationFilters;
+	setFilters: React.Dispatch<React.SetStateAction<LocationFilters>>;
+	onApply: () => void; // new prop
 }
 
-export default function Filters({ onSortChange, sortOrder }: FiltersProps) {
+export default function Filters({
+	onSortChange,
+	sortOrder,
+	filters,
+	setFilters,
+	onApply,
+}: FiltersProps) {
 	const [open, setOpen] = React.useState(false);
+
 	return (
 		<Stack
 			useFlexGap
@@ -39,7 +47,7 @@ export default function Filters({ onSortChange, sortOrder }: FiltersProps) {
 			<Button
 				variant="outlined"
 				color="neutral"
-				startDecorator={<FilterAltOutlined />}
+				startDecorator={<Rule color="success" />}
 				onClick={() => setOpen(true)}
 			>
 				Filters
@@ -49,69 +57,45 @@ export default function Filters({ onSortChange, sortOrder }: FiltersProps) {
 				sortOrder={sortOrder}
 			/>
 
-			<Drawer open={open} onClose={() => setOpen(false)}>
-				<Stack useFlexGap spacing={3} sx={{ p: 2 }}>
-					<DialogTitle>Filters</DialogTitle>
-					<ModalClose />
-					{/* <CountrySelector /> */}
-					<Box
-						sx={{
-							display: "grid",
-							gridTemplateColumns: "1fr auto 1fr",
-							gridTemplateRows: "auto auto",
-							gap: 1,
-						}}
-					>
-						<FormLabel htmlFor="filters-start-date">
-							Start date
-						</FormLabel>
-						<div />
-						<FormLabel htmlFor="filters-end-date">
-							End date
-						</FormLabel>
-
-						<Input
-							id="filters-start-date"
-							type="date"
-							placeholder="Jan 6 - Jan 13"
-							aria-label="Date"
-						/>
-						<Box sx={{ alignSelf: "center" }}>-</Box>
-						<Input
-							id="filters-end-date"
-							type="date"
-							placeholder="Jan 6 - Jan 13"
-							aria-label="Date"
+			<Drawer
+				open={open}
+				onClose={() => setOpen(false)}
+				sx={{
+					zIndex: 13000,
+				}}
+			>
+				<ModalClose />
+				<DialogTitle>Filters</DialogTitle>
+				<DialogContent>
+					<Box sx={{ p: 2 }}>
+						<LocationFiltersPanel
+							filters={filters}
+							setFilters={setFilters}
 						/>
 					</Box>
-					<FormControl>
-						<FormLabel>Price range</FormLabel>
-						<Slider
-							defaultValue={[2000, 4900]}
-							step={100}
-							min={0}
-							max={10000}
-							getAriaValueText={valueText}
-							valueLabelDisplay="auto"
-							valueLabelFormat={valueText}
-							marks={[
-								{ value: 0, label: "$0" },
-								{ value: 5000, label: "$5,000" },
-								{ value: 10000, label: "$10,000" },
-							]}
-							sx={{
-								[`& .${sliderClasses.markLabel}[data-index="0"]`]:
-									{
-										transform: "none",
-									},
-								[`& .${sliderClasses.markLabel}[data-index="2"]`]:
-									{
-										transform: "translateX(-100%)",
-									},
-							}}
-						/>
-					</FormControl>
-				</Stack>
+				</DialogContent>
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "end",
+						gap: 1,
+						p: 1.5,
+						borderTop: "1px solid",
+						borderColor: "divider",
+					}}
+				>
+					<Button
+						color="success"
+						variant="plain"
+						startDecorator={<Rule />}
+						onClick={() => {
+							onApply();
+							setOpen(false);
+						}}
+					>
+						Apply Filters
+					</Button>
+				</Box>
 			</Drawer>
 		</Stack>
 	);

@@ -31,6 +31,14 @@ const PER_PAGE = 50;
 export default function LocationPage({ params }: PageProps) {
 	const { location_id, location_name } = React.use(params);
 
+	const [appliedFilters, setAppliedFilters] = useState({
+		endemic: true,
+		threatened: true,
+		native: true,
+	});
+
+	const [pendingFilters, setPendingFilters] = useState(appliedFilters);
+
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
 	function formatLocationName(slug: string) {
@@ -54,9 +62,21 @@ export default function LocationPage({ params }: PageProps) {
 	) => {
 		setLoading(true);
 		setError(null);
+
+		const { endemic, threatened, native } = appliedFilters;
+
+		const query = new URLSearchParams({
+			place_id: placeId,
+			page: String(pageNumber),
+			order,
+			endemic: String(endemic),
+			threatened: String(threatened),
+			native: String(native),
+		});
+
 		try {
 			const res = await fetch(
-				`/api/i_naturalist/species_by_location?place_id=${placeId}&page=${pageNumber}&order=${order}`
+				`/api/i_naturalist/species_by_location?${query.toString()}`
 			);
 			if (!res.ok) {
 				throw new Error("Failed to fetch observations");
@@ -75,7 +95,7 @@ export default function LocationPage({ params }: PageProps) {
 
 	useEffect(() => {
 		fetchObservations(location_id, page, sortOrder);
-	}, [location_id, page, sortOrder]);
+	}, [location_id, page, sortOrder, appliedFilters]);
 
 	if (loading) {
 		return (
@@ -166,7 +186,13 @@ export default function LocationPage({ params }: PageProps) {
 				</Typography>
 			</Stack>
 			<Stack spacing={2} sx={{ px: 4, py: 2, minHeight: 0 }}>
-				<Filters onSortChange={setSortOrder} sortOrder={sortOrder} />
+				<Filters
+					onSortChange={setSortOrder}
+					sortOrder={sortOrder}
+					filters={pendingFilters}
+					setFilters={setPendingFilters}
+					onApply={() => setAppliedFilters(pendingFilters)}
+				/>
 				{loading ? (
 					<LinearProgress color="success" variant="soft" />
 				) : (

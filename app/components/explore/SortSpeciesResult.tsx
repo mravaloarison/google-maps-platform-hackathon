@@ -2,6 +2,7 @@ import * as React from "react";
 import Select, { selectClasses } from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import { Sort } from "@mui/icons-material";
 
 interface Props {
 	onSortChange: (order: "asc" | "desc") => void;
@@ -20,6 +21,7 @@ export default function SortSpeciesResult({ onSortChange, sortOrder }: Props) {
 			}}
 			placeholder="Order by"
 			indicator={<KeyboardArrowDown />}
+			startDecorator={<Sort />}
 			sx={{
 				[`& .${selectClasses.indicator}`]: {
 					transition: "0.2s",
