@@ -120,7 +120,7 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 			);
 
 			setNavigating(false);
-		}, 100);
+		}, 1000);
 	};
 
 	const handleSpeciesAutocompleteSelect = (
@@ -136,7 +136,7 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 			router.push(`/explore/by/species/${taxon_id}`);
 
 			setNavigating(false);
-		}, 100);
+		}, 1000);
 	};
 
 	return (
