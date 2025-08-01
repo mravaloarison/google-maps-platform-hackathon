@@ -8,11 +8,14 @@ import ListItemButton from "@mui/joy/ListItemButton";
 interface Location {
 	id: number;
 	display_name: string;
+	geometry_geojson: any;
+	bounding_box_geojson: any;
+	location: string;
 }
 
 interface Props {
 	locations: Location[];
-	onSelect: (name: string, id: string) => void;
+	onSelect: (place: Location) => void;
 }
 
 export default function LocationAutocompleteList({
@@ -39,11 +42,7 @@ export default function LocationAutocompleteList({
 		>
 			{locations.map((place, index) => (
 				<ListItem key={index}>
-					<ListItemButton
-						onClick={() =>
-							onSelect(place.display_name, String(place.id))
-						}
-					>
+					<ListItemButton onClick={() => onSelect(place)}>
 						{place.display_name}
 					</ListItemButton>
 				</ListItem>

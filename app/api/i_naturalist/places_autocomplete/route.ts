@@ -20,6 +20,9 @@ export async function GET(req: NextRequest) {
     const simplifiedResults = data.results.map((place: any) => ({
       id: place.id,
       display_name: place.display_name,
+      geometry_geojson: place.geometry_geojson,
+      bounding_box_geojson: place.bounding_box_geojson,
+      location: place.location,
     }));
 
     return NextResponse.json(simplifiedResults);

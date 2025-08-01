@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import { LocationOn } from "@mui/icons-material";
 import {
 	Typography,
@@ -26,22 +29,30 @@ export default function SpeciesBtn({
 	selected?: boolean;
 	id?: string;
 }) {
+	const [isClicked, setIsClicked] = React.useState(false);
+
 	function timeAgo(dateString: string) {
 		const now = new Date();
 		const date = new Date(dateString);
 		const diff = now.getTime() - date.getTime();
+
 		const seconds = Math.floor(diff / 1000);
 		if (seconds < 60)
 			return `${seconds} second${seconds !== 1 ? "s" : ""} ago`;
+
 		const minutes = Math.floor(seconds / 60);
 		if (minutes < 60)
 			return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+
 		const hours = Math.floor(minutes / 60);
 		if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+
 		const days = Math.floor(hours / 24);
 		if (days < 30) return `${days} day${days !== 1 ? "s" : ""} ago`;
+
 		const months = Math.floor(days / 30);
 		if (months < 12) return `${months} month${months !== 1 ? "s" : ""} ago`;
+
 		const years = Math.floor(months / 12);
 		return `${years} year${years !== 1 ? "s" : ""} ago`;
 	}
@@ -58,12 +69,14 @@ export default function SpeciesBtn({
 			sx={{
 				display: "flex",
 				flexDirection: "row",
-				transform: selected ? "scale(1.03)" : "scale(1)",
+				transform: selected || isClicked ? "scale(1.03)" : "scale(1)",
 				transition: "transform 0.2s ease",
-				borderColor: selected
-					? "success.outlinedBorder"
-					: "neutral.outlinedBorder",
-				bgcolor: selected ? "success.softBg" : "neutral.softBg",
+				borderColor:
+					selected || isClicked
+						? "success.outlinedBorder"
+						: "neutral.outlinedBorder",
+				bgcolor:
+					selected || isClicked ? "success.softBg" : "neutral.softBg",
 				"&:hover": {
 					boxShadow: "lg",
 					borderColor:
@@ -71,18 +84,22 @@ export default function SpeciesBtn({
 					cursor: "pointer",
 				},
 			}}
-			onMouseEnter={() =>
+			onClick={() => {
 				window.dispatchEvent(
 					new CustomEvent("highlight-marker", {
 						detail: id?.split("-").slice(1).join("-"),
 					})
-				)
-			}
-			onMouseLeave={() =>
+				);
+
+				setIsClicked(true);
+			}}
+			onMouseLeave={() => {
 				window.dispatchEvent(
 					new CustomEvent("highlight-marker", { detail: null })
-				)
-			}
+				);
+
+				setIsClicked(false);
+			}}
 		>
 			<CardOverflow
 				sx={{

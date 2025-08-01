@@ -17,6 +17,7 @@ interface Species {
 export default function GoogleMapsLayout() {
 	const [species, setSpecies] = useState<Species[]>([]);
 	const [highlightedKey, setHighlightedKey] = useState<string | null>(null);
+	const [selectedPolygon, setSelectedPolygon] = useState<any | null>(null);
 
 	useEffect(() => {
 		const loadSpecies = () => {
@@ -50,26 +51,36 @@ export default function GoogleMapsLayout() {
 		};
 		window.addEventListener("highlight-marker", onHighlight);
 
+		// Listen for polygon highlight event
+		const onHighlightPlace = (e: Event) => {
+			const ce = e as CustomEvent<any>;
+			setSelectedPolygon(ce.detail);
+		};
+		window.addEventListener("highlight-place", onHighlightPlace);
+
 		return () => {
 			window.removeEventListener("species-updated", loadSpecies);
 			window.removeEventListener("highlight-marker", onHighlight);
+			window.removeEventListener("highlight-place", onHighlightPlace);
 		};
 	}, []);
 
-	return <>Lol</>;
-	// return (
-	// 	<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
-	// 		<GoogleMap
-	// 			style={{ width: "100%", height: "100%" }}
-	// 			defaultCenter={{ lat: 22.54992, lng: 0 }}
-	// 			defaultZoom={7}
-	// 			mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || ""}
-	// 		>
-	// 			<Markers points={species} highlightedKey={highlightedKey} />
-	// 			<FitBounds points={species} />
-	// 		</GoogleMap>
-	// 	</APIProvider>
-	// );
+	return (
+		<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+			<GoogleMap
+				style={{ width: "100%", height: "100%" }}
+				defaultCenter={{ lat: 22.54992, lng: 0 }}
+				defaultZoom={7}
+				mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || ""}
+			>
+				<Markers points={species} highlightedKey={highlightedKey} />
+				<FitBounds points={species} />
+				{selectedPolygon && (
+					<HighlightPolygon geometry={selectedPolygon} />
+				)}
+			</GoogleMap>
+		</APIProvider>
+	);
 }
 
 type Points = google.maps.LatLngLiteral & { key: string };
@@ -83,7 +94,6 @@ const Markers = ({ points, highlightedKey }: MarkersProps) => {
 	const clusterer = useRef<MarkerClusterer | null>(null);
 	const markersRef = useRef<{ [key: string]: google.maps.Marker }>({});
 
-	// Initialize clusterer and add cluster click zoom
 	useEffect(() => {
 		if (!map) return;
 
@@ -106,13 +116,11 @@ const Markers = ({ points, highlightedKey }: MarkersProps) => {
 		}
 	}, [map]);
 
-	// Add and update markers on points change
 	useEffect(() => {
 		if (!map || !clusterer.current) return;
 
 		clusterer.current.clearMarkers();
 
-		// Clear listeners on old markers before discarding
 		Object.values(markersRef.current).forEach((marker) =>
 			google.maps.event.clearInstanceListeners(marker)
 		);
@@ -165,5 +173,55 @@ const FitBounds = ({ points }: { points: Points[] }) => {
 		points.forEach((p) => bounds.extend(p));
 		map.fitBounds(bounds);
 	}, [map, points]);
+	return null;
+};
+
+const HighlightPolygon = ({ geometry }: { geometry: any }) => {
+	const map = useMap();
+	const polygonRef = useRef<google.maps.Polygon | null>(null);
+
+	useEffect(() => {
+		if (!map || !geometry) return;
+
+		if (polygonRef.current) {
+			polygonRef.current.setMap(null);
+		}
+
+		let paths: google.maps.LatLngLiteral[] = [];
+		if (geometry.type === "Polygon") {
+			paths = geometry.coordinates[0].map((coord: [number, number]) => ({
+				lat: coord[1],
+				lng: coord[0],
+			}));
+		} else if (geometry.type === "MultiPolygon") {
+			paths = geometry.coordinates[0][0].map(
+				(coord: [number, number]) => ({
+					lat: coord[1],
+					lng: coord[0],
+				})
+			);
+		}
+
+		const polygon = new google.maps.Polygon({
+			paths,
+			strokeColor: "#1565C0",
+			strokeOpacity: 0.9,
+			strokeWeight: 2,
+			fillColor: "#42A5F5",
+			fillOpacity: 0.25,
+		});
+
+		polygon.setMap(map);
+		polygonRef.current = polygon;
+
+		const bounds = new google.maps.LatLngBounds();
+		paths.forEach((p) => bounds.extend(p));
+		map.fitBounds(bounds);
+
+		return () => {
+			polygon.setMap(null);
+		};
+	}, [geometry, map]);
+
 	return null;
 };

@@ -58,8 +58,6 @@ export default function LocationPage({ params }: PageProps) {
 	const [appliedPerPage, setAppliedPerPage] = useState(PER_PAGE);
 	const [pendingPerPage, setPendingPerPage] = useState(PER_PAGE);
 
-	const [highlightedKey, setHighlightedKey] = useState<string | null>(null);
-
 	const fetchObservations = async (
 		placeId: string,
 		pageNumber: number,
@@ -80,6 +78,16 @@ export default function LocationPage({ params }: PageProps) {
 			native: String(native),
 			per_page: String(perPage),
 		});
+
+		const selectedPlace = localStorage.getItem("selectedPlace");
+		if (selectedPlace) {
+			const place = JSON.parse(selectedPlace);
+			window.dispatchEvent(
+				new CustomEvent("highlight-place", {
+					detail: place.bounding_box_geojson,
+				})
+			);
+		}
 
 		try {
 			const res = await fetch(

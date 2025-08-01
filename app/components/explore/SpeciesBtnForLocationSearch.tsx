@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import { AccessTime, LocationOn, Visibility } from "@mui/icons-material";
 import {
 	Typography,
@@ -31,6 +34,8 @@ export default function SpeciesBtnForLocationSearch({
 	selected?: boolean;
 	id?: string;
 }) {
+	const [isClicked, setIsClicked] = React.useState(false);
+
 	function timeAgo(dateString: string) {
 		const now = new Date();
 		const date = new Date(dateString);
@@ -67,12 +72,16 @@ export default function SpeciesBtnForLocationSearch({
 			variant="outlined"
 			orientation="horizontal"
 			sx={{
-				bgcolor: selected ? "success.softBg" : "neutral.softBg",
+				bgcolor:
+					selected || isClicked ? "success.softBg" : "neutral.softBg",
 				display: "flex",
 				flexDirection: { sm: "row", xs: "column" },
-				transform: selected ? "scale(1.03)" : "scale(1)",
+				transform: selected || isClicked ? "scale(1.03)" : "scale(1)",
 				transition: "transform 0.2s ease",
-				borderColor: selected ? "success.outlinedBorder" : undefined,
+				borderColor:
+					selected || isClicked
+						? "success.outlinedBorder"
+						: undefined,
 				"&:hover": {
 					boxShadow: "lg",
 					borderColor:
@@ -80,18 +89,20 @@ export default function SpeciesBtnForLocationSearch({
 					cursor: "pointer",
 				},
 			}}
-			onMouseEnter={() =>
+			onClick={() => {
 				window.dispatchEvent(
 					new CustomEvent("highlight-marker", {
 						detail: id?.split("-").slice(1).join("-"),
 					})
-				)
-			}
-			onMouseLeave={() =>
+				);
+				setIsClicked(true);
+			}}
+			onMouseLeave={() => {
 				window.dispatchEvent(
 					new CustomEvent("highlight-marker", { detail: null })
-				)
-			}
+				);
+				setIsClicked(false);
+			}}
 		>
 			<CardOverflow
 				sx={{

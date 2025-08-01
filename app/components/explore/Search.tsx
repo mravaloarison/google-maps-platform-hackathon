@@ -20,6 +20,9 @@ interface SearchProps {
 interface Location {
 	id: number;
 	display_name: string;
+	geometry_geojson: any;
+	bounding_box_geojson: any;
+	location: string;
 }
 
 interface SpeciesResult {
@@ -101,23 +104,23 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		}
 	}, [searchValue, tabIndex]);
 
-	const handleLocationAutocompleteSelect = (
-		locationName: string,
-		locationId: string
-	) => {
+	const handleLocationAutocompleteSelect = (place: Location) => {
 		setNavigating(true);
-		setSearchValue(locationName);
+		setSearchValue(place.display_name);
 		setSuppressFetch(true);
 		setFilteredLocationResults([]);
 
 		setTimeout(() => {
+			localStorage.setItem("selectedPlace", JSON.stringify(place));
+
 			router.push(
-				`/explore/by/locations/${locationId}/${encodeURIComponent(
-					locationName
+				`/explore/by/locations/${place.id}/${encodeURIComponent(
+					place.display_name
 				)}`
 			);
+
 			setNavigating(false);
-		}, 1000);
+		}, 100);
 	};
 
 	const handleSpeciesAutocompleteSelect = (
@@ -131,8 +134,9 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		setFilteredSpeciesResults([]);
 		setTimeout(() => {
 			router.push(`/explore/by/species/${taxon_id}`);
+
 			setNavigating(false);
-		}, 1000);
+		}, 100);
 	};
 
 	return (
@@ -168,6 +172,7 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 					locations={filteredLocationResults}
 					onSelect={handleLocationAutocompleteSelect}
 				/>
+
 				<SpeciesAutocompleteList
 					speciesList={filteredSpeciesResults}
 					onSelect={handleSpeciesAutocompleteSelect}
