@@ -39,7 +39,7 @@ export default function LocationFiltersPanel({
 				value={pendingPerPage}
 				onChange={handleChange}
 				slotProps={{
-					input: { min: 1, max: 200, step: 1 },
+					input: { min: 1, max: 200, step: 49 },
 				}}
 				sx={{ width: "100%" }}
 			/>

@@ -240,7 +240,10 @@ export default function LocationPage({ params }: PageProps) {
 				<Filters
 					onSortChange={setSortOrder}
 					sortOrder={sortOrder}
-					onApply={() => setAppliedFilters(pendingFilters)}
+					onApply={() => {
+						setAppliedFilters(pendingFilters);
+						setAppliedPerPage(pendingPerPage);
+					}}
 				>
 					<LocationFiltersPanel
 						filters={pendingFilters}

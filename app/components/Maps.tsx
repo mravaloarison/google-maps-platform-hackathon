@@ -92,6 +92,20 @@ const Markers = ({ points, highlightedKey }: MarkersProps) => {
 	const markersRef = useRef<{ [key: string]: google.maps.Marker }>({});
 
 	useEffect(() => {
+		const handleClear = () => {
+			if (clusterer.current) {
+				clusterer.current.clearMarkers();
+			}
+			markersRef.current = {};
+		};
+
+		window.addEventListener("clear-markers", handleClear);
+		return () => {
+			window.removeEventListener("clear-markers", handleClear);
+		};
+	}, []);
+
+	useEffect(() => {
 		if (!map) return;
 
 		if (!clusterer.current) {

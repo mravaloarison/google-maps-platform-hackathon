@@ -105,6 +105,8 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 	}, [searchValue, tabIndex]);
 
 	const handleLocationAutocompleteSelect = (place: Location) => {
+		window.dispatchEvent(new Event("clear-markers"));
+
 		setNavigating(true);
 		setSearchValue(place.display_name);
 		setSuppressFetch(true);
@@ -128,6 +130,8 @@ export default function Search({ tabIndex = 0 }: SearchProps) {
 		scientific_name: string,
 		taxon_id: number
 	) => {
+		window.dispatchEvent(new Event("clear-markers"));
+
 		setNavigating(true);
 		setSearchValue(common_name ?? scientific_name);
 		setSuppressFetch(true);
