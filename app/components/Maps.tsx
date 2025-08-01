@@ -75,9 +75,6 @@ export default function GoogleMapsLayout() {
 			>
 				<Markers points={species} highlightedKey={highlightedKey} />
 				<FitBounds points={species} />
-				{selectedPolygon && (
-					<HighlightPolygon geometry={selectedPolygon} />
-				)}
 			</GoogleMap>
 		</APIProvider>
 	);
@@ -150,9 +147,11 @@ const Markers = ({ points, highlightedKey }: MarkersProps) => {
 		clusterer.current.addMarkers(Object.values(newMarkers));
 	}, [points, map]);
 
+	// Animate bounce for hovered marker & pan map there
 	useEffect(() => {
 		if (!map) return;
 
+		// Reset all animations first
 		Object.values(markersRef.current).forEach((m) => m.setAnimation(null));
 
 		if (highlightedKey && markersRef.current[highlightedKey]) {

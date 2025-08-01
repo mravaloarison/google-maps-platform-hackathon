@@ -12,13 +12,11 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/inter": "^5.2.6",
-    "@google/genai": "^1.12.0",
     "@googlemaps/markerclusterer": "^2.6.2",
     "@mui/icons-material": "^7.1.2",
     "@mui/joy": "^5.0.0-beta.52",
     "@mui/material": "^7.1.2",
     "@vis.gl/react-google-maps": "^1.5.4",
-    "framer-motion": "^12.23.12",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
