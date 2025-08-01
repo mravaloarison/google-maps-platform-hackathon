@@ -108,7 +108,9 @@ export default function HeaderSectionSpeciesResult({
 					</Button>
 				</Stack>
 				<Typography level="body-sm" color="neutral" sx={{ mt: 2 }}>
-					Found <strong>{total_results}</strong> species
+					Found{" "}
+					<strong>{total_results?.toLocaleString("en-US")}</strong>{" "}
+					species
 				</Typography>
 			</Stack>
 
