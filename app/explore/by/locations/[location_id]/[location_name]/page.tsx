@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Stack, Typography, LinearProgress, Button } from "@mui/joy";
 import Filters from "@/app/components/explore/Filters";
 import Pagination from "@/app/components/explore/Pagination";
-import DescriptionIcon from "@mui/icons-material/Description";
+import GeneratePlacesDescription from "@/app/components/explore/GeneratePlaceDescription";
 
 import SpeciesBtnForLocationSearch from "@/app/components/explore/SpeciesBtnForLocationSearch";
 import HeaderSectionLocationSearch from "@/app/components/explore/HeadeerSectionLocationSearch";
@@ -222,14 +222,9 @@ export default function LocationPage({ params }: PageProps) {
 				<HeaderSectionLocationSearch
 					placeName={formatLocationName(location_name)}
 				/>
-				<Button
-					variant="soft"
-					color="neutral"
-					sx={{ width: "fit-content" }}
-					startDecorator={<DescriptionIcon color="success" />}
-				>
-					Read more about this location
-				</Button>
+				<GeneratePlacesDescription
+					placeName={formatLocationName(location_name)}
+				/>
 				<Typography level="body-sm" color="neutral">
 					Found{" "}
 					<strong>{totalResults.toLocaleString("en-US")}</strong>{" "}
